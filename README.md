@@ -13,9 +13,16 @@ Click the link below to open the notebook in Google Colab:
 - [Sentiment Cyberattack (R)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/R_Py_sentiment_Colab.ipynb)
 - [Semantic Search txtai (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Semantic_Search_txtai.ipynb)
 - [Topic Analysis BERTopicr (R)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/R_Py_bertopicr_Colab.ipynb)
-- [Whisper Transcribe Audio file (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Whisper_transcribe.ipynb)
+- [Whisper Transcribe Audio file (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Whisper_transcribe.ipynb).
 
 ## Open on local machine
+
+- Download the raw file from the GitHub repository, 
+- download and install Ollama (if you intend to use a local model), 
+- download a language model (run by Ollama), 
+- download and install Python (see Instructions below), 
+- activate a Python virtual environment (see Instructions below), 
+- and run the Python file in a terminal (see Instructions below).
 
 Click the link below to open and download the Python file and run it locally:
 

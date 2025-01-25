@@ -25,7 +25,7 @@ Click the link below to open the notebook in Google Colab:
 - activate a Python virtual environment (see Instructions below), 
 - and run the Python file in a terminal (see Instructions below).
 
-Click the link below to open and download the Python file and run it locally:
+Click the link below to open and download the Python /- or R -- file and run it locally:
 
 - [Streamlit Chatbot (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/streamlit_chatbot2.py) - run it with 'streamlit run streamlit_chatbot2.py'.
 - [Shiny Chatbot (R, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/ollama_chatbot.R) - run it with 'shiny::runApp('VPISI/POT/DO/ollama_chatbot.R')'.

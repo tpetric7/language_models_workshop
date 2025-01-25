@@ -13,6 +13,7 @@ Click the link below to open the notebook in Google Colab:
 - [Sentiment Cyberattack (R)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/R_Py_sentiment_Colab.ipynb)
 - [Semantic Search txtai (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Semantic_Search_txtai.ipynb)
 - [Topic Analysis BERTopicr (R)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/R_Py_bertopicr_Colab.ipynb)
+- [Translate Text (Python, Google Translate)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/translate_doc_google.ipynb)
 - [Whisper Transcribe Audio file (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Whisper_transcribe.ipynb).
 
 ## Open on local machine

@@ -1,0 +1,657 @@
+#' ---
+#' title: "Topic Modeling with BERTopic in R via reticulate and Groq LLMs"
+#' subtitle: "Topics in articles of the Slovenian newspaper Dnevnik"
+#' author: "Teodor Petrič"
+#' date: "2024-09-02"
+#' format:
+#'   html:
+#'     theme:
+#'       light: flatly
+#'       dark: darkly
+#'     # css: [style.css, TMwR.css]
+#'     # scss: [colors.scss]
+#'     # scss: [r4ds.scss]
+#'     # page-layout: full
+#'     toc: true
+#'     toc-depth: 5
+#'     toc-location: right
+#'     code-fold: true
+#'     code-summary: "Show the code"
+#'     code-tools: true
+#'     code-copy: hover
+#'     code-overflow: wrap
+#'     code-link: false # set to false for plotly
+#'     number-sections: true
+#'     number-depth: 5
+#'     callout-appearance: default
+#'     callout-icon: true
+#'     citations-hover: true
+#'     footnotes-hover: true
+#'     fig-width: 8
+#'     fig-height: 6
+#'     fig-align: left
+#'     fig-responsive: true
+#'     fig-cap-location: bottom
+#'     tbl-cap-location: top
+#'     lang: en
+#'     self-contained: true
+#'     anchor-sections: true
+#'     smooth-scroll: true
+#'     hypothesis: true
+#'   pdf:
+#'     documentclass: scrreprt # scrbook
+#'     keep-tex: true
+#'     include-in-header: 
+#'       text: |
+#'         \usepackage{makeidx}
+#'         \makeindex
+#'     include-after-body: 
+#'       text: |
+#'         \printindex
+#'   epub:
+#'     cover-image: "pictures/R_delavnica_naslovna_slika.png"
+#'   docx:
+#'     reference-doc: custom-reference.docx
+#' 
+#' editor: source
+#' ---
+#' 
+#' The programming steps of this tutorial were supported by the programming skills of `OpenAI`'s language model `GPT4o`. 
+#' 
+#' 
+#' ## Env & Packages
+#' 
+#' *Load* the `R` packages below and *initialize* a `Python` environment with the `reticulate` package.
+#' 
+#' By default, `reticulate` uses an isolated `Python` *virtual environment* named `r-reticulate` (cf. https://rstudio.github.io/reticulate/).
+#' 
+#' The `use_python()` function below enables you to specify an alternate `Python` (cf. https://rstudio.github.io/reticulate/).
+#' 
+## ------------------------------------
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+library(tictoc)
+library(htmltools)
+library(htmlwidgets)
+library(arrow)
+
+library(reticulate)
+# ~ Home, in cmd terminal insert: echo %USERPROFILE%
+userprofile <- Sys.getenv("USERPROFILE")
+use_python(file.path(userprofile, "anaconda3/envs/bertopic"), required = TRUE)
+reticulate::py_config()
+reticulate::py_available()
+
+library(bertopicr)
+
+#' 
+#' 
+#' ## Text preparation
+#' 
+#' The Slovenian texts are in the *text_clean* column. They were segmented into smaller chunks (each about 100 tokens long) to optimize topic extraction with `Bertopic`. Special characters were removed with a cleaning function. The text chunks are all in lower case. 
+#' 
+## ------------------------------------
+# input_file <- "spiegel_poldeu2.csv"
+input_folder <- "C:/Users/teodo/Documents/Python/tp_bertopic_keybert/data"
+input_file <- "dnevnik.csv"
+
+dataset = read_csv(file.path(input_folder, input_file)) |> 
+  rename(text = Content, doc_id = ...1)
+
+names(dataset)
+dim(dataset)
+
+#' 
+## ------------------------------------
+# Define the cleaning function
+clean_text <- function(text) {
+  text <- gsub('<[^>]+>', '', text)  # Remove HTML tags
+  # Remove special characters but keep alphanumeric, whitespace
+  text <- str_remove_all(text, '[^\\w\\s]')
+  text <- str_squish(text)  # Remove leading and trailing whitespace
+  text <- tolower(text)  # Convert to lowercase
+  return(text)
+}
+
+#' 
+#' 
+## ------------------------------------
+dataset <- dataset %>%
+  # Drop missing values
+  filter(!is.na(text)) %>%
+  # Apply the cleaning function and ensure only valid strings are processed
+  mutate(text_clean = sapply(text, function(s) {
+    if (!is.na(s) && is.character(s) && str_squish(s) != "") {
+      return(clean_text(s))
+    } else {
+      return(NA)
+    }
+  })) |> 
+filter(!is.na(text_clean) & str_length(text_clean) > 0)
+
+dataset |> select(text_clean) |> head()
+
+#' 
+#' 
+#' 
+#' The collected `stopword` list includes German and English tokens and will be inserted into `Python`'s `CountVectorizer` before `TF-IDF` calculation. The language model will be fed with the text chunks in the *text_clean* column before the `stopword` removal.
+#' 
+## ------------------------------------
+input_folder <- "c:/Users/teodo/Documents/R/bertopic-r/stopwords"
+input_file <- "all_stopwords.txt"
+all_stopwords <- read_lines(file.path(input_folder, input_file))
+
+#' 
+#' Below are the lists of *texts_cleaned* and *timesteps*, which we need during the model preparation, topic extraction and visualization.
+#' 
+## ------------------------------------
+texts_cleaned = dataset$text_clean
+titles = dataset$doc_id
+timestamps <- as.list(dataset$Date)
+# timestamps <- as.integer(dataset$year)
+
+texts_cleaned[[1]]
+
+#' 
+#' 
+#' ## Model Preparation
+#' 
+#' For model preparation, we are going to use `reticulate` to interface with `Python` modules. The `R` code is essentially a conversion of `Python` code. 
+#' 
+#' The Topic model preparation will also include *local* language models (via `ollama` or `lm-studio`) leveraging the `OpenAI` endpoint.
+#' 
+#' Before running the program chunk below, make sure to *install* all the necessary `Python` packages in a `virtual` environment or a `conda` environment (see short instructions in the README file or other tutorials online): `bertopic, numpy, scikit-learn, sentence-transformers, umap-learn, hdbscan, spacy, openai` and `datetime`. Download and install `ollama` or `lm-studio` on your computer to serve the *local* language model. 
+#' 
+#' In `RStudio`, you can accomplish the installation of `Python` packages with `reticulate` commands: e.g., `reticulate::py_install ("bertopic", envname = "CHOOSE THE PATH YOUR PYTHON ENVIRONMENT")`. 
+#' 
+#' If you are familiar working with a (windows or conda) `terminal`, you can activate the appropriate `python` or `conda` environment and install the necessary packages: e.g., `pip install bertopic`).
+#' 
+#' ### Python packages
+#' 
+#' First, we `import` the necessary `Python` packages: `numpy, umap, hdbscan, scikit-learn, sentence_transformers, and bertopic`.
+#' 
+## ------------------------------------
+# Import necessary Python modules
+np <- import("numpy")
+umap <- import("umap")
+UMAP <- umap$UMAP
+hdbscan <- import("hdbscan")
+HDBSCAN <- hdbscan$HDBSCAN
+sklearn <- import("sklearn")
+CountVectorizer <- sklearn$feature_extraction$text$CountVectorizer
+bertopic <- import("bertopic")
+plotly <- import("plotly")
+datetime <- import("datetime")
+
+
+#' 
+#' 
+#' ### Embeddings
+#' 
+#' `SentenceTransformer` creates the necessary *embeddings* (vector representations of text tokens) for topic modeling with `bertopic`. The first time `SentenceTransformer` is used with a specific model, the model has to been downloaded from the `huggingface` website (https://huggingface.co/), where many freely usable language models are hosted (https://huggingface.co/models). 
+#' 
+## ------------------------------------
+# Embed the sentences
+py <- import_builtins()
+sentence_transformers <- import("sentence_transformers")
+SentenceTransformer <- sentence_transformers$SentenceTransformer
+embedding_model = SentenceTransformer("cjvt/sloberta-trendi-topics")
+embeddings = embedding_model$encode(texts_cleaned, show_progress_bar=TRUE)
+
+
+#' 
+#' ### Dimension reduction
+#' 
+#' In the next two steps, the `umap` module reduces the number of dimensions of embeddings, and the `hdbscan` module extracts clusters that can evaluated by the topic pipeline. 
+#' 
+## ------------------------------------
+# Initialize UMAP and HDBSCAN models
+umap_model <- UMAP(n_neighbors=15L, n_components=5L, min_dist=0.0, metric='cosine', random_state=42L)
+
+
+#' 
+#' Other dimension reduction methods (like `PCA` or `tSNE`) can be used instead.
+#' 
+#' ### Clustering
+#' 
+#' The `hdbscan` module extracts clusters that can evaluated by the topic pipeline.
+#' 
+## ------------------------------------
+hdbscan_model <- HDBSCAN(min_cluster_size=50L, min_samples = 30L, metric='euclidean', cluster_selection_method='eom', gen_min_span_tree=TRUE, prediction_data=TRUE)
+
+
+#' 
+#' Other `clustering` methods (like `kmeans`) can be used instead.
+#' 
+#' ### c-TF-IDF
+#' 
+#' The `Countvectorizer` calculates the `c-TF-IDF` frequencies and enables the `representation model` defined below to extract suitable keywords as descriptors of the extracted topics.
+#' 
+#' `Stopwords` are removed *after* creating `embeddings`, but *before* `keyword` extraction. Stopword removal is accomplished with a `CountVectorizer` option.
+#' 
+## ------------------------------------
+# Initialize CountVectorizer
+vectorizer_model <- CountVectorizer(min_df=2L, ngram_range=tuple(1L, 3L), 
+                                    max_features = 10000L, max_df = 50L,
+                                    stop_words = all_stopwords)
+sentence_vectors <- vectorizer_model$fit_transform(texts_cleaned)
+sentence_vectors_dense <- np$array(sentence_vectors)
+sentence_vectors_dense <- py_to_r(sentence_vectors_dense)
+
+
+#' 
+#' ### Representation models
+#' 
+#' In the example below, *multiple representation models* are used for keyword extraction from the identified topics and topic description: `keyBERT` (part of `bertopic`), a language model (served locally by `ollama` or online by `Groq`, both via the `OpenAI` endpoint), a Maximal Marginal Relevance model (`MMR`) and a `spacy` `POS` representation model. By default, only one Representation model is created by `bertopic`.
+#' 
+## ------------------------------------
+# Initialize representation models
+keybert_model <- bertopic$representation$KeyBERTInspired()
+openai <- import("openai")
+OpenAI <- openai$OpenAI
+
+os <- import("os")
+groq <- import("groq")
+dotenv <- import("dotenv")
+load_dotenv <- dotenv$load_dotenv
+dotenv_path <- '.env'
+load_dotenv(dotenv_path)
+
+# groq_api_key <- os$environ['GROQ_API_KEY']
+# client <- groq$Groq(api_key=groq_api_key)
+
+client = OpenAI(
+  base_url="https://api.groq.com/openai/v1",
+  api_key=os$environ$get("GROQ_API_KEY")
+  )
+
+prompt <- "
+I have a topic that contains the following documents:
+[DOCUMENTS]
+The topic is described by the following keywords: [KEYWORDS]
+
+Based on the information above, extract a short but highly descriptive topic label of at most 5 words. Make sure it is in the following format:
+topic: <topic label>
+"
+
+openai_model <- bertopic$representation$OpenAI(client, 
+                                               # model = "llama3-70b-8192", 
+                                               # model = "mixtral-8x7b-32768"
+                                               model = "llama-3.1-70b-versatile",
+                                               # model = "llama-3.2-11b-text-preview",
+                                               exponential_backoff = TRUE, 
+                                               chat = TRUE, 
+                                               prompt = prompt)
+
+pos_model <- bertopic$representation$PartOfSpeech("sl_core_news_trf")
+mmr_model <- bertopic$representation$MaximalMarginalRelevance(diversity = 0.5)
+
+# Combine all representation models
+representation_model <- list(
+  "KeyBERT" = keybert_model,
+  "OpenAI" = openai_model,
+  "MMR" = mmr_model,
+  "POS" = pos_model
+)
+
+
+#' 
+#' The *prompt* describes the task the language model has to accomplish, mentions the documents to work with and the topic labels that it should derive from the text contents and keywords.
+#' 
+#' ### Zeroshot keywords
+#' 
+#' `Bertopic` enables us to define a `zeroshot` list of keywords that can be used to drive the topic model towards desired topic outcomes. In the code below, the zeroshot keyword search is disabled, but can be activated if needed.
+#' 
+## ------------------------------------
+# We can define a number of topics that we know are in the documents
+zeroshot_topic_list  <- list("national identity", "financial issues in slovenia")
+
+
+#' 
+#' ### Topic Model
+#' 
+## ------------------------------------
+# Initialize BERTopic model with pipeline models and hyperparameters
+BERTopic <- bertopic$BERTopic
+topic_model <- BERTopic(
+  embedding_model = embedding_model,
+  umap_model = umap_model,
+  hdbscan_model = hdbscan_model,
+  vectorizer_model = vectorizer_model,
+  # zeroshot_topic_list = zeroshot_topic_list,
+  # zeroshot_min_similarity = 0.85,
+  representation_model = representation_model,
+  calculate_probabilities = TRUE,
+  top_n_words = 10L,
+  verbose = TRUE
+)
+
+
+#' 
+#' 
+#' ### Model Training
+#' 
+#' After all these preparational steps, the topic model is trained with:  `topic_model$fit_transform(texts, embeddings)`.
+#' 
+#' The following chunk includes error handling.
+#' 
+## ------------------------------------
+tictoc::tic()
+
+# Define a function to fit the model and transform texts with error handling
+fit_transform_with_retry <- function(topic_model, texts, embeddings, max_retries = 5, wait_time = 60) {
+  attempt <- 1
+  success <- FALSE
+  result <- NULL
+  
+  while (!success && attempt <= max_retries) {
+    tryCatch(
+      {
+        # Attempt to fit the model and transform texts
+        fit_transform <- topic_model$fit_transform(texts, embeddings)
+        success <- TRUE  # Mark success if no error occurs
+        result <- fit_transform
+      },
+      error = function(e) {
+        message("Error occurred: ", conditionMessage(e))
+        if (attempt < max_retries) {
+          message("Retrying in ", wait_time, " seconds... (Attempt ", attempt, " of ", max_retries, ")")
+          Sys.sleep(wait_time)  # Wait before retrying
+          attempt <<- attempt + 1  # Increment attempt counter
+        } else {
+          stop("Max retries reached. Unable to complete request.")
+        }
+      }
+    )
+    
+    if (success) {
+      break  # Exit the loop if the operation is successful
+    }
+  }
+  
+  return(result)
+}
+
+# Use the function to fit the model and transform the texts
+fit_transform <- fit_transform_with_retry(topic_model, texts_cleaned, embeddings)
+topics <- fit_transform[[1]]
+# Now transform the texts to get the updated probabilities
+transform_result <- topic_model$transform(texts_cleaned)
+probs <- transform_result[[2]]  # Extract the updated probabilities
+
+tictoc::toc()
+
+
+#' 
+#' We obtain the *topic labels* with `topics <- fit_transform[[1]]` and the *topic probabilities* with `probs <- fit_transform[[2]]`.
+#' 
+#' 
+#' ### Topic Dynamics
+#' 
+#' Since our dataset contains time-related metadata, we can use the `timestamps` for `dynamic topic modeling`, i.e., for discovering topic development or topic sequences through time. If your data doesn't contain any time-related column, the timestamps and topics_over_time calculations have to be disabled.
+#' 
+## ------------------------------------
+# Converting R Date to Python datetime
+datetime <- import("datetime")
+
+timestamps <- as.list(dataset$Date)
+# timestamps <- as.integer(dataset$year)
+
+# Convert each R date object to an ISO 8601 string
+timestamps <- lapply(timestamps, function(x) {
+  format(x, "%Y-%m-%dT%H:%M:%S")  # ISO 8601 format
+})
+
+# Dynamic topic model
+topics_over_time  <- topic_model$topics_over_time(texts_cleaned, timestamps, nr_bins=20L, global_tuning=TRUE, evolution_tuning=TRUE)
+
+
+#' 
+#' 
+#' ### Store Results
+#' 
+#' The *topic labels* and *probabilities* are stored in a dataframe named *results*, together with other variables and metadata.
+#' 
+## ------------------------------------
+# Combine results with additional columns
+results <- dataset |> 
+  mutate(Topic = topics, 
+         Probability = apply(probs, 1, max))  # Assuming the highest probability for each sentence
+
+results <- results |> 
+  mutate(row_id = row_number()) |> 
+  select(row_id, everything())
+
+head(results,10) |> rmarkdown::paged_table()
+
+
+#' 
+## ------------------------------------
+#| eval: false
+
+# results |>
+#   saveRDS("data/spiegel_topic_results_df.rds")
+# results |>
+#   write_parquet("data/spiegel_topic_results_df.parquet")
+# results |>
+#   write_csv("data/spiegel_topic_results_df.csv")
+# results |>
+#   writexl::write_xlsx("data/spiegel_topic_results_df.xlsx")
+# 
+
+#' 
+#' 
+#' ## Results
+#' 
+#' The `R` package `bertopicr` will be used in this section to display the topic modeling results in the form of lists, data frames and visualizations. The names of the functions are nearly the same as in the `Python` package `BERTopic`. 
+#' 
+#' ### Document information
+#' 
+#' The `get_document_info_df()` creates a dataframe that contains the documents and associated topics, characteristics keywords, probability scores, representative documents of a each topic and representation model results (e.g., keywords extracted by `KeyBERT`, `MMR`, `spacy`, and `LLM` descriptions of the topics).
+#' 
+## ------------------------------------
+library(bertopicr)
+document_info_df <- get_document_info_df(model = topic_model, 
+                                         texts = texts_cleaned, 
+                                         drop_expanded_columns = TRUE)
+document_info_df |> head() |> rmarkdown::paged_table()
+
+#' 
+#' ### Representative docs
+#' 
+#' First, create a data frame similar to *df_docs* below, which contains the columns Topic, Document and probs. Then use the `get_most_representative_docs()` function to extract representative documents of a chosen topic.
+#' 
+## ------------------------------------
+# Create a data frame similar to df_docs
+df_docs <- tibble(Topic = results$Topic,
+                  Document = results$text_clean,
+                  probs = results$Probability)
+rep_docs <- get_most_representative_docs(df = df_docs, 
+                                         topic_nr = 3, 
+                                         n_docs = 5)
+unique(rep_docs)
+
+#' 
+#' ### Topic information
+#' 
+#' The function `get_topic_info_df()` creates another useful data frame, which for each of the extracted topics shows the number of associated documents (or text chunks), topic id (Name), characeristic keywords according to the chosen representation models and three (concatenated) representative documents.
+#' 
+## ------------------------------------
+topic_info_df <- get_topic_info_df(model = topic_model, 
+                                   drop_expanded_columns = TRUE)
+head(topic_info_df) |> rmarkdown::paged_table()
+
+#' 
+#' 
+#' ### Words in Topics
+#' 
+#' The `get_topics_df()` function concentrates on the words associated with a certain topic and their probability scores. The outliers (Topic = -1) usually are not included in the analysis. But BERTopic offers a function to reduce the number of outliers and to update the topic model. 
+#' 
+## ------------------------------------
+topics_df <- get_topics_df(model = topic_model)
+head(topics_df, 10)
+
+#' 
+#' ### Topic Barchart
+#' 
+#' The `visualize_barchart()` creates an interactive barchart with the top five words of the most frequently occurring topics. 
+#' 
+## ------------------------------------
+visualize_barchart(model = topic_model, 
+                   filename = "topics_topwords_interactive_barchart.html", # default
+                   open_file = FALSE) # TRUE enables output in browser
+
+#' 
+#' 
+#' ### Find Topics
+#' 
+#' The `find_topics_df()` function is useful for semantic search. It can identify topics that are associated with a chosen query or multiple queries.
+#' 
+## ------------------------------------
+find_topics_df(model = topic_model, 
+               queries = "migration", # user input
+               top_n = 10, # default
+               return_tibble = TRUE) # default
+
+#' 
+## ------------------------------------
+find_topics_df(model = topic_model, 
+                               queries = c("migranten", "asylanten"),
+                               top_n = 5)
+
+#' 
+#' 
+#' ### Get Topics
+#' 
+#' The `get_topic_df()` function creates a dataframe and extracts the top words of a chosen topic.
+#' 
+## ------------------------------------
+get_topic_df(model = topic_model, 
+                           topic_number = 0, 
+                           top_n = 5, # default is 10
+                           return_tibble = TRUE) # default
+
+#' 
+#' ### Topic Distribution
+#' 
+#' The `visualize_distribution()` function produces an interactive barchart that displays the associated topics of a chosen document (or text chunk). The probability scores help to identify the most likely topic(s) of a document (or text chunk).
+#' 
+## ------------------------------------
+# default filename: topic_dist_interactive.html
+visualize_distribution(model = topic_model, 
+                       text_id = 1, # user input
+                       probabilities = probs) # see model training
+
+#' 
+#' 
+#' ### Intertopic Distance Map
+#' 
+#' The semantic relatedness can be displayed with the `visualize_topics()` function. 
+#' 
+## ------------------------------------
+visualize_topics(model = topic_model, 
+                 filename = "intertopic_distance_map") # default name
+
+#' 
+#' 
+#' ### Topic Similarity
+#' 
+#' We can create a `similarity matrix` by applying cosine similarities through the generated topic embeddings. The resulting matrix indicates how similar topics are to each other. To visualize the similarity matrix we can use the `visualize_heatmap()` function. 
+#' 
+## ------------------------------------
+visualize_heatmap(model = topic_model, 
+                  filename = "topics_similarity_heatmap", 
+                  auto_open = FALSE)
+
+#' 
+#' 
+#' ### Topic hierarchy
+#' 
+#' The best way to display the relatedness of documents (or text chunks) is the `visualize_hierarchy()` function, which creates an interactive `dendrogram`.
+#' 
+## ------------------------------------
+visualize_hierarchy(model = topic_model, 
+                    hierarchical_topics = NULL, # default
+                    filename = "topic_hierarchy", # default name, html extension
+                    auto_open = FALSE) # TRUE enables output in browser
+
+#' 
+#' An additional option is the creation of a `hierarchical topics` list that can be included in the interactive `dendrogram` and enables the user to identify joint expressions.
+#' 
+## ------------------------------------
+hierarchical_topics = topic_model$hierarchical_topics(texts_cleaned)
+visualize_hierarchy(model = topic_model, 
+                    hierarchical_topics = hierarchical_topics,
+                    filename = "topic_hierarchy", # default name, html extension
+                    auto_open = FALSE) # TRUE enables output in browser
+
+#' 
+#' 
+#' ### Visualize Documents
+#' 
+#' The `visualize_documents()` function displays the identified clusters associated with a certain topic in two dimensions. Usually, it is best to reduce the dimensionality of the embeddings with UMAP (or another dimension reduction method) to produce intelligible visual results. The interactive plot allows the user to select one or more clusters with a double-click of the mouse. 
+#' 
+## ------------------------------------
+# Reduce dimensionality of embeddings using UMAP
+reduced_embeddings <- umap$UMAP(n_neighbors = 10L, n_components = 2L, min_dist = 0.0, metric = 'cosine')$fit_transform(embeddings)
+
+visualize_documents(model = topic_model, 
+                    texts = texts_cleaned, 
+                    reduced_embeddings = reduced_embeddings, 
+                    filename = "visualize_documents", # default extension html
+                    auto_open = FALSE) # TRUE enables output in browser
+
+#' 
+#' 
+#' To create an interactive 3D plot, the `visualize_documents_3d()` function can be used.
+#' 
+## ------------------------------------
+# Reduce dimensionality of embeddings using UMAP
+reduced_embeddings <- umap$UMAP(n_neighbors = 10L, n_components = 3L, min_dist = 0.0, metric = 'cosine')$fit_transform(embeddings)
+
+visualize_documents_3d(model = topic_model, 
+                       texts = texts_cleaned, 
+                       reduced_embeddings = reduced_embeddings, 
+                       custom_labels = FALSE, # default
+                       hide_annotation = TRUE, # default
+                       tooltips = c("Topic", "Name", "Probability", "Text"), # deault
+                       filename = "visualize_documents_3d", # default name
+                       auto_open = FALSE) # TRUE enables output in browser
+
+#' 
+#' 
+#' ### Topic Development
+#' 
+#' We can also inspect how a chosen number of topics develop during a certain period of time. The `visualize_topics_over_time()` function assumes that the `timestamps`, the `topic model` and the `topics over time model` are already defined (e.g., in the model preparation step after topic model training). The `timestamps` need to be `integers` or in a a certain `date format` (see model preparation step above). 
+#' 
+## ------------------------------------
+visualize_topics_over_time(model = topic_model, 
+                           # see Topic Dynamics section above
+                           topics_over_time_model = topics_over_time,
+                           top_n_topics = 10, # default is 20
+                           filename = "topics_over_time") # default, html extension
+
+#' 
+#' 
+#' ### Groups
+#' 
+#' If our dataset includes categorical variables (groups, classes, etc.), we can use the `visualize_topics_per_class()` function to display an interactive barchart with the groups or classes associated with a chosen topic. With a double-click of the mouse, the user can choose a single topic and inspect the frequency of the groups.
+#' 
+## ------------------------------------
+classes = as.list(dataset$genre) # text types
+topics_per_class = topic_model$topics_per_class(texts_cleaned, classes=classes)
+
+visualize_topics_per_class(model = topic_model, 
+                           topics_per_class = topics_per_class,
+                           start = 0, # default
+                           end = 10, # default
+                           filename = "topics_per_class", # default, html extension 
+                           auto_open = FALSE) # TRUE enables output in browser
+
+#' 
+#' ## Conclusion
+#' 
+#' `BERTopic` is an awesome topic modeling package in Python. The `bertopicr` package tries to bring some of the functionalities into an `R` programming environment with the magnificent `reticulate` package as interface to the `Python` backend. 
+#' 
+#' `BERTopic` offers a number of additional functions, which will be included in subsequent versions of `bertopicr`.

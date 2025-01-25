@@ -31,6 +31,7 @@ Click the link below to open and download the Python /- or R -- file and run it 
 - [Shiny Chatbot (R, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/ollama_chatbot.R) - run it with 'shiny::runApp("ollama_chatbot.R")'.
 - [Shiny Chatbot (R, Groq model)](https://github.com/tpetric7/language_models_workshop/blob/main/groq_chat_app.R) - run it with 'shiny::runApp("groq_chat_app.R")'.
 - [Topics in the newspaper Dnevnik (R, Groq model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.qmd) - run the Quarto markdown file with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
+- [Topics in the newspaper Dnevnik (R, Groq model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.R) - run the R script with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
 - [Streamlit Chat with PDF (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf.py) - run it with 'streamlit run chat_with_pdf.py'.
 - [Chainlit Chat with PDF (Python, Ollama, local Slovenian model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf_sl.py) - run it with 'chainlit run chat_with_pdf_sl.py'.
 

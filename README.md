@@ -28,6 +28,10 @@ Click the link below to open the notebook in Google Colab:
 Click the link below to open and download the Python file and run it locally:
 
 - [Streamlit Chatbot (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/streamlit_chatbot2.py) - run it with 'streamlit run streamlit_chatbot2.py'.
+- [Shiny Chatbot (R, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/ollama_chatbot.R) - run it with 'shiny::runApp('VPISI/POT/DO/ollama_chatbot.R')'.
+- [Shiny Chatbot (R, Groq model)](https://github.com/tpetric7/language_models_workshop/blob/main/groq_chat_app.R) - run it with 'shiny::runApp('VPISI/POT/DO/groq_chat_app.R').
+- [Streamlit Chat with PDF (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf.py).
+- [Chainlit Chat with PDF (Python, Ollama, local Slovenian model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf_sl.py).
 
 ## Instructions for installing Python and Streamlit on your local machine
 

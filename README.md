@@ -21,18 +21,20 @@ Click the link below to open the notebook in Google Colab:
 - Download the raw file from the GitHub repository, 
 - download and install Ollama (if you intend to use a local model), 
 - download a language model (run by Ollama), 
-- download and install Python (see Instructions below), 
+- download and install Python or R (see Instructions below), 
 - activate a Python virtual environment (see Instructions below), 
-- and run the Python file in a terminal (see Instructions below).
+- and run the Python or R file in a terminal (see Instructions below).
 
 Click the link below to open and download the Python /- or R -- file and run it locally:
 
 - [Streamlit Chatbot (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/streamlit_chatbot2.py) - run it with 'streamlit run streamlit_chatbot2.py'.
-- [Shiny Chatbot (R, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/ollama_chatbot.R) - run it with 'shiny::runApp('VPISI/POT/DO/ollama_chatbot.R')'.
-- [Shiny Chatbot (R, Groq model)](https://github.com/tpetric7/language_models_workshop/blob/main/groq_chat_app.R) - run it with 'shiny::runApp('VPISI/POT/DO/groq_chat_app.R').
-- [Streamlit Chat with PDF (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf.py).
-- [Chainlit Chat with PDF (Python, Ollama, local Slovenian model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf_sl.py).
+- [Shiny Chatbot (R, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/ollama_chatbot.R) - run it with 'shiny::runApp("ollama_chatbot.R")'.
+- [Shiny Chatbot (R, Groq model)](https://github.com/tpetric7/language_models_workshop/blob/main/groq_chat_app.R) - run it with 'shiny::runApp("groq_chat_app.R")'.
+- [Streamlit Chat with PDF (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf.py) - run it with 'streamlit run chat_with_pdf.py'.
+- [Chainlit Chat with PDF (Python, Ollama, local Slovenian model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf_sl.py) - run it with 'chainlit run chat_with_pdf_sl.py'.
 
-## Instructions for installing Python and Streamlit on your local machine
+## Instructions for installing Python, Chainlit, Streamlit, R and Shiny on your local machine
 
 - [Python & Streamlit installation guide](https://github.com/tpetric7/language_models_workshop/blob/main/Streamlit_app_how_to_prepare.pdf)
+- [Python & Chainlit installation guide](https://github.com/tpetric7/language_models_workshop/blob/main/Chainlit_app_how_to_prepare.pdf)
+- [R & Shiny installation guide](https://github.com/tpetric7/language_models_workshop/blob/main/Shiny_app_how_to_prepare.pdf).

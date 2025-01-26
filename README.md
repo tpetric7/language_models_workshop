@@ -19,8 +19,8 @@ Click the link below to open the notebook in Google Colab:
 ## Open on local machine
 
 - Download the raw file from the GitHub repository, 
-- download and install Ollama (if you intend to use a local model), 
-- download a language model (run by Ollama), 
+- download and install Ollama or LMStudio (if you intend to use a local model), 
+- download a language model (run by Ollama or LMStudio), 
 - download and install Python or R (see Instructions below), 
 - activate a Python virtual environment (see Instructions below), 
 - and run the Python or R file in a terminal (see Instructions below).
@@ -30,8 +30,10 @@ Click the link below to open and download the Python /- or R -- file and run it 
 - [Streamlit Chatbot (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/streamlit_chatbot2.py) - run it with 'streamlit run streamlit_chatbot2.py'.
 - [Shiny Chatbot (R, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/ollama_chatbot.R) - run it with 'shiny::runApp("ollama_chatbot.R")'.
 - [Shiny Chatbot (R, Groq model)](https://github.com/tpetric7/language_models_workshop/blob/main/groq_chat_app.R) - run it with 'shiny::runApp("groq_chat_app.R")'.
-- [Topics in the newspaper Dnevnik (R, Groq model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.qmd) - run the Quarto markdown file with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
-- [Topics in the newspaper Dnevnik (R, Groq model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.R) - run the R script with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
+- [BERTopic Document Visualization of Spiegel articles (Python, HuggingFace transformer model)](https://github.com/tpetric7/language_models_workshop/blob/main/bertopic_spiegel.py) - run the Python script with 'streamlit run bertopic_spiegel.py'. 
+- [Topics in the newspaper Dnevnik (R, Groq, HuggingFace model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.qmd) - run the Quarto markdown file with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
+- [Topics in the newspaper Dnevnik (R, Groq, HuggingFace model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.R) - run the R script with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
+- [BERTopic Document Visualization of Spiegel articles (Python, local HuggingFace transformer model)](https://github.com/tpetric7/language_models_workshop/blob/main/bertopic_spiegel.py) - run the Python script with 'streamlit run bertopic_spiegel.py'. 
 - [Streamlit Chat with PDF (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf.py) - run it with 'streamlit run chat_with_pdf.py'.
 - [Chainlit Chat with PDF (Python, Ollama, local Slovenian model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf_sl.py) - run it with 'chainlit run chat_with_pdf_sl.py'.
 

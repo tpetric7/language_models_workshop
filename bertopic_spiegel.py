@@ -1,3 +1,4 @@
+# run this script with: streamlit run bertopic_spiegel.py
 import os
 import pandas as pd
 from transformers import AutoModel, AutoTokenizer

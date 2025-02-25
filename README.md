@@ -16,6 +16,7 @@ Click the link below to open the notebook in Google Colab:
 - [Topic Analysis BERTopicr (R)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/R_Py_bertopicr_Colab.ipynb)
 - [Primerjava besedil z Geminijem (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Primerjava_romanov_z_Geminijem.ipynb)
 - [Translate Text (Python, Google Translate)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/translate_doc_google.ipynb)
+- [Transcribe Audio with Whisper in 3 lines of code (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Transcribe_with_Whisper.ipynb)
 - [Whisper Transcribe Audio file (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Whisper_transcribe.ipynb).
 
 ## Open on local machine
@@ -38,6 +39,7 @@ Click the link below to open and download the Python /- or R -- file and run it 
 - [BERTopic Document Visualization of Spiegel articles (Python, local HuggingFace transformer model)](https://github.com/tpetric7/language_models_workshop/blob/main/bertopic_spiegel.py) - run the Python script with 'streamlit run bertopic_spiegel.py'. 
 - [Streamlit Chat with PDF (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf.py) - run it with 'streamlit run chat_with_pdf.py'.
 - [Chainlit Chat with PDF (Python, Ollama, local Slovenian model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf_sl.py) - run it with 'chainlit run chat_with_pdf_sl.py'.
+- [Transcribe Audio with Whisper in 3 lines of code (Python)](https://github.com/tpetric7/language_models_workshop/blob/main/transcribe_with_whisper.py)
 
 ## Instructions for installing Python, Chainlit, Streamlit, R and Shiny on your local machine
 

@@ -9,7 +9,7 @@ Click the link below to open the notebook in Google Colab:
 - [Groq API Basic (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Groq_API_basic_Google_Colab.ipynb)
 - [Groq API Summarize (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Groq_API_summarize_Google_Colab.ipynb)
 - [Sentiment Trump Inauguration 2025 (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Sentiment_in_colors_Trump_Inaugural_Speech.ipynb)
-- [Sentiment Trump Inauguration 2025 vs Anthropic CEO Warning(Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Sentiment_Trump_CEO_stats_colored.ipynb)
+- [Sentiment Trump Inauguration Speech vs Anthropic CEO Warning 2025 (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Sentiment_Trump_CEO_stats_colored.ipynb)
 - [Sentiment Cyberattack (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Sentiment_in_colors_Cyberattack.ipynb)
 - [Sentiment Cyberattack (R)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/R_Py_sentiment_Colab.ipynb)
 - [Semantic Search txtai (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Semantic_Search_txtai.ipynb)

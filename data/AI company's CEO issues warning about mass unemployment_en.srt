@@ -1,0 +1,1791 @@
+1
+00:00:01,134 --> 00:00:03,103
+Well known, respected tech CEO Dario
+
+2
+00:00:03,103 --> 00:00:04,504
+Amodei, who heads a cutting edge
+
+3
+00:00:04,504 --> 00:00:06,272
+AI company called anthropic,
+
+4
+00:00:06,272 --> 00:00:08,274
+is raising alarms tonight about AI's
+
+5
+00:00:08,274 --> 00:00:10,110
+potential impact on employment
+
+6
+00:00:10,110 --> 00:00:11,711
+that could soon be felt.
+
+7
+00:00:11,711 --> 00:00:12,178
+Well, he says,
+
+8
+00:00:12,178 --> 00:00:14,514
+I can lead to incredible advancements
+
+9
+00:00:14,514 --> 00:00:15,582
+like medical breakthroughs
+
+10
+00:00:15,582 --> 00:00:16,683
+and boost the economy.
+
+11
+00:00:16,683 --> 00:00:17,150
+He believes
+
+12
+00:00:17,150 --> 00:00:19,285
+it could also lead to half of entry
+
+13
+00:00:19,285 --> 00:00:20,020
+level white collar
+
+14
+00:00:20,020 --> 00:00:21,621
+jobs, disappearing in 10
+
+15
+00:00:21,621 --> 00:00:23,156
+to 20% unemployment
+
+16
+00:00:23,156 --> 00:00:25,158
+in the next 1 to 5 years.
+
+17
+00:00:25,158 --> 00:00:26,359
+It's something that's been talked about
+
+18
+00:00:26,359 --> 00:00:27,761
+within tech circles for a while,
+
+19
+00:00:27,761 --> 00:00:30,330
+but rarely so starkly and so publicly.
+
+20
+00:00:30,330 --> 00:00:31,064
+I spoke to him
+
+21
+00:00:31,064 --> 00:00:32,232
+just before er about that
+
+22
+00:00:32,232 --> 00:00:33,166
+and other implications
+
+23
+00:00:33,166 --> 00:00:36,169
+he thinks I may have on society.
+
+24
+00:00:36,336 --> 00:00:39,039
+Dario, you've said that I could wipe out
+
+25
+00:00:39,039 --> 00:00:40,707
+half of all entry level
+
+26
+00:00:40,707 --> 00:00:43,443
+white collar jobs and spike unemployment
+
+27
+00:00:43,443 --> 00:00:45,578
+to 10 to 20%.
+
+28
+00:00:45,578 --> 00:00:47,947
+How soon might that happen?
+
+29
+00:00:49,649 --> 00:00:51,451
+Well, let's,
+
+30
+00:00:51,451 --> 00:00:51,818
+first of all,
+
+31
+00:00:51,818 --> 00:00:52,952
+thanks for having me on the show.
+
+32
+00:00:52,952 --> 00:00:54,754
+But, just to back up a little bit,
+
+33
+00:00:54,754 --> 00:00:56,456
+you know, I've been building
+
+34
+00:00:56,456 --> 00:00:58,391
+AI for over a decade,
+
+35
+00:00:58,391 --> 00:00:59,959
+and I think maybe the most salient
+
+36
+00:00:59,959 --> 00:01:01,094
+feature, the technology
+
+37
+00:01:01,094 --> 00:01:01,995
+and what is driving
+
+38
+00:01:01,995 --> 00:01:02,896
+all of this
+
+39
+00:01:02,896 --> 00:01:04,064
+is how fast
+
+40
+00:01:04,064 --> 00:01:05,965
+the technology is getting better.
+
+41
+00:01:05,965 --> 00:01:07,200
+a couple of years ago,
+
+42
+00:01:07,200 --> 00:01:08,134
+you could say that
+
+43
+00:01:08,134 --> 00:01:09,602
+AI models were maybe as good
+
+44
+00:01:09,602 --> 00:01:11,104
+as a smart high school student.
+
+45
+00:01:11,104 --> 00:01:12,205
+I would say that now
+
+46
+00:01:12,205 --> 00:01:12,672
+they're as good
+
+47
+00:01:12,672 --> 00:01:13,873
+as a smart college student
+
+48
+00:01:13,873 --> 00:01:16,142
+and sort of reaching past that.
+
+49
+00:01:16,142 --> 00:01:17,277
+I really worry
+
+50
+00:01:17,277 --> 00:01:19,312
+particularly at the entry level,
+
+51
+00:01:19,312 --> 00:01:22,182
+that the AI models are, you know,
+
+52
+00:01:22,182 --> 00:01:23,850
+very much at the center of what
+
+53
+00:01:23,850 --> 00:01:24,784
+what an entry level
+
+54
+00:01:24,784 --> 00:01:26,619
+human worker would do.
+
+55
+00:01:26,619 --> 00:01:28,822
+and so it's hard to estimate,
+
+56
+00:01:28,822 --> 00:01:29,622
+you know, exactly
+
+57
+00:01:29,622 --> 00:01:30,690
+what the impact would be.
+
+58
+00:01:30,690 --> 00:01:31,624
+And, you know,
+
+59
+00:01:31,624 --> 00:01:32,425
+there's always this
+
+60
+00:01:32,425 --> 00:01:35,061
+question of adaptation and,
+
+61
+00:01:35,061 --> 00:01:36,763
+you know, these, these technology changes
+
+62
+00:01:36,763 --> 00:01:37,630
+that happened before.
+
+63
+00:01:37,630 --> 00:01:39,065
+But I think what is striking to me
+
+64
+00:01:39,065 --> 00:01:41,568
+about the this, this AI boom
+
+65
+00:01:41,568 --> 00:01:42,836
+is that it's bigger
+
+66
+00:01:42,836 --> 00:01:44,504
+and it's broader and it's moving
+
+67
+00:01:44,504 --> 00:01:46,306
+faster than anything has before.
+
+68
+00:01:46,306 --> 00:01:47,440
+And so compared
+
+69
+00:01:47,440 --> 00:01:49,175
+to previous technology changes,
+
+70
+00:01:49,175 --> 00:01:50,276
+I'm a little bit
+
+71
+00:01:50,276 --> 00:01:51,511
+worried about the labor impact,
+
+72
+00:01:51,511 --> 00:01:53,880
+simply because it's happening so fast
+
+73
+00:01:53,880 --> 00:01:54,447
+that yes,
+
+74
+00:01:54,447 --> 00:01:55,548
+people will adapt,
+
+75
+00:01:55,548 --> 00:01:58,218
+but they may not adapt fast enough.
+
+76
+00:01:58,218 --> 00:01:59,486
+And so they're there, you know,
+
+77
+00:01:59,486 --> 00:02:01,321
+there may be an adjustment period.
+
+78
+00:02:01,321 --> 00:02:04,290
+You are running an incredibly important
+
+79
+00:02:04,591 --> 00:02:07,160
+company in AI.
+
+80
+00:02:07,160 --> 00:02:08,795
+and you know this better than
+
+81
+00:02:08,795 --> 00:02:10,130
+better than anybody
+
+82
+00:02:10,130 --> 00:02:12,198
+or as well as, as, you know,
+
+83
+00:02:12,198 --> 00:02:13,566
+all the names we know people,
+
+84
+00:02:13,566 --> 00:02:14,467
+Sam Altman and others
+
+85
+00:02:14,467 --> 00:02:16,703
+who are working, Elon Musk and AI.
+
+86
+00:02:16,703 --> 00:02:18,838
+Now, why are you raising the alarm?
+
+87
+00:02:18,838 --> 00:02:21,241
+Because it's not necessarily,
+
+88
+00:02:21,241 --> 00:02:22,942
+I would think, in your best interest,
+
+89
+00:02:22,942 --> 00:02:24,010
+because a lot of the messages
+
+90
+00:02:24,010 --> 00:02:25,211
+we hear from,
+
+91
+00:02:25,211 --> 00:02:26,946
+at least publicly, from,
+
+92
+00:02:26,946 --> 00:02:27,313
+you know,
+
+93
+00:02:27,313 --> 00:02:28,915
+some AI CEOs and stuff
+
+94
+00:02:28,915 --> 00:02:29,682
+is, is a little bit
+
+95
+00:02:29,682 --> 00:02:31,451
+more calming, like,
+
+96
+00:02:31,451 --> 00:02:31,684
+you know,
+
+97
+00:02:31,684 --> 00:02:32,418
+these agents are going
+
+98
+00:02:32,418 --> 00:02:33,453
+to be great in your life.
+
+99
+00:02:33,453 --> 00:02:35,989
+And yes, there may be problems,
+
+100
+00:02:35,989 --> 00:02:38,024
+but, you know, writ large.
+
+101
+00:02:38,024 --> 00:02:40,560
+This is a fantastic thing.
+
+102
+00:02:40,560 --> 00:02:40,860
+Yeah.
+
+103
+00:02:40,860 --> 00:02:41,194
+I mean,
+
+104
+00:02:41,194 --> 00:02:41,494
+you know,
+
+105
+00:02:41,494 --> 00:02:42,962
+I think, I think the reason I'm raising
+
+106
+00:02:42,962 --> 00:02:44,430
+the alarm is that I think others
+
+107
+00:02:44,430 --> 00:02:45,565
+others haven't as much.
+
+108
+00:02:45,565 --> 00:02:45,999
+And, you know,
+
+109
+00:02:45,999 --> 00:02:47,567
+I think I think someone needs to say it,
+
+110
+00:02:47,567 --> 00:02:49,302
+you know, to be to be clear.
+
+111
+00:02:49,302 --> 00:02:49,636
+And, you know,
+
+112
+00:02:49,636 --> 00:02:50,436
+I recognize it's
+
+113
+00:02:50,436 --> 00:02:51,804
+always a difficult balance. Right?
+
+114
+00:02:51,804 --> 00:02:53,439
+I'm aware of my position
+
+115
+00:02:53,439 --> 00:02:55,108
+that I'm building this technology
+
+116
+00:02:55,108 --> 00:02:56,943
+while also expressing concerns about it.
+
+117
+00:02:56,943 --> 00:02:58,178
+And, you know, the reason
+
+118
+00:02:58,178 --> 00:02:59,412
+I'm doing both of those things
+
+119
+00:02:59,412 --> 00:03:00,213
+is, you know, one,
+
+120
+00:03:00,213 --> 00:03:02,282
+I think the benefits are massive.
+
+121
+00:03:02,282 --> 00:03:02,715
+and, you know,
+
+122
+00:03:02,715 --> 00:03:04,417
+we need to find a way to, to,
+
+123
+00:03:04,417 --> 00:03:05,818
+you know, to achieve the benefits
+
+124
+00:03:05,818 --> 00:03:07,320
+and mitigate or prevent
+
+125
+00:03:07,320 --> 00:03:08,655
+prevent the harms.
+
+126
+00:03:08,655 --> 00:03:10,123
+And, you know, the second thing
+
+127
+00:03:10,123 --> 00:03:11,257
+I would say is, look, there
+
+128
+00:03:11,257 --> 00:03:12,592
+are, as you mentioned, 6
+
+129
+00:03:12,592 --> 00:03:14,394
+or 7 companies in the US
+
+130
+00:03:14,394 --> 00:03:15,862
+building this technology, right?
+
+131
+00:03:15,862 --> 00:03:17,230
+If we stop doing it tomorrow,
+
+132
+00:03:17,230 --> 00:03:18,431
+the rest would continue.
+
+133
+00:03:18,431 --> 00:03:19,132
+If all of us
+
+134
+00:03:19,132 --> 00:03:20,500
+somehow stopped doing it tomorrow,
+
+135
+00:03:20,500 --> 00:03:21,768
+then China would just beat us.
+
+136
+00:03:21,768 --> 00:03:22,669
+And I don't think China
+
+137
+00:03:22,669 --> 00:03:24,537
+winning in this technology
+
+138
+00:03:24,537 --> 00:03:25,038
+is, you know,
+
+139
+00:03:25,038 --> 00:03:26,739
+I don't think that helps anyone
+
+140
+00:03:26,739 --> 00:03:28,608
+or makes the situation any better.
+
+141
+00:03:28,608 --> 00:03:30,476
+I do want to read some of the Sam Altman,
+
+142
+00:03:30,476 --> 00:03:31,978
+your former boss at OpenAI
+
+143
+00:03:31,978 --> 00:03:33,613
+said in September.
+
+144
+00:03:33,613 --> 00:03:34,981
+he was saying that I can cause
+
+145
+00:03:34,981 --> 00:03:36,149
+significant, in his words,
+
+146
+00:03:36,149 --> 00:03:37,784
+significant change in labor markets,
+
+147
+00:03:37,784 --> 00:03:39,018
+good and bad.
+
+148
+00:03:39,018 --> 00:03:40,587
+He went on to say that most jobs
+
+149
+00:03:40,587 --> 00:03:41,821
+will change more slowly
+
+150
+00:03:41,821 --> 00:03:43,122
+than most people think.
+
+151
+00:03:43,122 --> 00:03:43,990
+And then he said this,
+
+152
+00:03:43,990 --> 00:03:45,325
+and I want to just read a word for word.
+
+153
+00:03:45,325 --> 00:03:47,026
+He said many of the jobs we do
+
+154
+00:03:47,026 --> 00:03:47,427
+today
+
+155
+00:03:47,427 --> 00:03:48,061
+would have looked like
+
+156
+00:03:48,061 --> 00:03:49,429
+trifling waste of time
+
+157
+00:03:49,429 --> 00:03:51,264
+to people a few hundred years ago,
+
+158
+00:03:51,264 --> 00:03:52,232
+but nobody is looking
+
+159
+00:03:52,232 --> 00:03:53,433
+back in the past wishing
+
+160
+00:03:53,433 --> 00:03:54,901
+they were a lamp lighter.
+
+161
+00:03:54,901 --> 00:03:55,835
+If a lamp lighter
+
+162
+00:03:55,835 --> 00:03:57,003
+could see the world today,
+
+163
+00:03:57,003 --> 00:03:58,271
+he would think the prosperity
+
+164
+00:03:58,271 --> 00:03:59,906
+all around him was unimaginable.
+
+165
+00:03:59,906 --> 00:04:01,407
+And if we could fast forward
+
+166
+00:04:01,407 --> 00:04:02,775
+100 years from today,
+
+167
+00:04:02,775 --> 00:04:03,576
+the prosperity
+
+168
+00:04:03,576 --> 00:04:04,911
+all around us would feel
+
+169
+00:04:04,911 --> 00:04:07,113
+just as unimaginable.
+
+170
+00:04:07,113 --> 00:04:08,581
+for younger people, I should say, lamp
+
+171
+00:04:08,581 --> 00:04:10,116
+lighters was actually a job.
+
+172
+00:04:10,116 --> 00:04:11,684
+People went around
+
+173
+00:04:11,684 --> 00:04:13,186
+lighting lamps on the streets.
+
+174
+00:04:13,186 --> 00:04:14,921
+I think a lot of people may not even know
+
+175
+00:04:14,921 --> 00:04:15,755
+what a lamp lighter is,
+
+176
+00:04:15,755 --> 00:04:17,624
+but do you think Sam Holman is wrong?
+
+177
+00:04:19,525 --> 00:04:19,859
+Yeah.
+
+178
+00:04:19,859 --> 00:04:20,593
+So, you know, I think
+
+179
+00:04:20,593 --> 00:04:21,194
+there are some things
+
+180
+00:04:21,194 --> 00:04:22,829
+I, I agree with about that.
+
+181
+00:04:22,829 --> 00:04:23,730
+And then there are some things
+
+182
+00:04:23,730 --> 00:04:24,964
+that I think are too optimistic.
+
+183
+00:04:24,964 --> 00:04:26,499
+So, you know, I definitely agree
+
+184
+00:04:26,499 --> 00:04:28,001
+that, you know,
+
+185
+00:04:28,001 --> 00:04:29,269
+I if we succeeded,
+
+186
+00:04:29,269 --> 00:04:30,503
+it can actually grow the pie.
+
+187
+00:04:30,503 --> 00:04:31,337
+Great. Right.
+
+188
+00:04:31,337 --> 00:04:31,904
+You know, I wouldn't
+
+189
+00:04:31,904 --> 00:04:32,672
+be surprised
+
+190
+00:04:32,672 --> 00:04:33,406
+if, you know,
+
+191
+00:04:33,406 --> 00:04:35,675
+economic growth is much higher than it is
+
+192
+00:04:35,675 --> 00:04:38,678
+today as a as a macroscopic phenomenon,
+
+193
+00:04:38,711 --> 00:04:38,945
+right?
+
+194
+00:04:38,945 --> 00:04:41,180
+That that I allows society
+
+195
+00:04:41,180 --> 00:04:43,383
+as a whole to be, to be more productive.
+
+196
+00:04:43,383 --> 00:04:43,650
+So.
+
+197
+00:04:43,650 --> 00:04:44,817
+Well, let me let me just say,
+
+198
+00:04:44,817 --> 00:04:45,985
+because you've
+
+199
+00:04:45,985 --> 00:04:47,287
+previously in the past said
+
+200
+00:04:47,287 --> 00:04:48,621
+you're the you've described
+
+201
+00:04:48,621 --> 00:04:50,490
+a future where cancer is cured,
+
+202
+00:04:50,490 --> 00:04:52,392
+the economy grows at 10% a year,
+
+203
+00:04:52,392 --> 00:04:53,793
+the budget is balanced,
+
+204
+00:04:53,793 --> 00:04:55,995
+and 20% of people don't have jobs.
+
+205
+00:04:57,063 --> 00:04:57,363
+That's
+
+206
+00:04:57,363 --> 00:04:58,264
+that's exactly what I
+
+207
+00:04:58,264 --> 00:04:59,065
+was getting right
+
+208
+00:04:59,065 --> 00:05:00,533
+where I agree
+
+209
+00:05:00,533 --> 00:05:02,168
+with all the positive potential,
+
+210
+00:05:02,168 --> 00:05:04,470
+I think that I think that is wrong.
+
+211
+00:05:04,470 --> 00:05:05,271
+but but, you know,
+
+212
+00:05:05,271 --> 00:05:06,673
+I think I think the, the,
+
+213
+00:05:06,673 --> 00:05:07,307
+you know, the quote
+
+214
+00:05:07,307 --> 00:05:10,076
+you just flashed, this is maybe two,
+
+215
+00:05:10,076 --> 00:05:11,577
+maybe two,
+
+216
+00:05:11,577 --> 00:05:14,113
+optimistic, maybe too sanguine,
+
+217
+00:05:14,113 --> 00:05:16,049
+about the ability for people to,
+
+218
+00:05:16,049 --> 00:05:16,983
+to, to adapt.
+
+219
+00:05:16,983 --> 00:05:18,151
+You know, people have adapted
+
+220
+00:05:18,151 --> 00:05:20,086
+to past technological changes.
+
+221
+00:05:20,086 --> 00:05:21,621
+But I'll say again,
+
+222
+00:05:21,621 --> 00:05:23,389
+everyone I've talked to have said
+
+223
+00:05:23,389 --> 00:05:24,791
+this technological change
+
+224
+00:05:24,791 --> 00:05:25,725
+looks different.
+
+225
+00:05:25,725 --> 00:05:27,327
+It looks faster,
+
+226
+00:05:27,327 --> 00:05:29,162
+it looks harder to adapt to.
+
+227
+00:05:29,162 --> 00:05:30,363
+It's broader.
+
+228
+00:05:30,363 --> 00:05:31,564
+The pace of progress
+
+229
+00:05:31,564 --> 00:05:33,833
+keeps catching people off guard.
+
+230
+00:05:33,833 --> 00:05:36,703
+And and so I don't know exactly how fast,
+
+231
+00:05:36,703 --> 00:05:37,437
+you know, the,
+
+232
+00:05:37,437 --> 00:05:38,137
+the you know,
+
+233
+00:05:38,137 --> 00:05:39,605
+the job concerns are going to come.
+
+234
+00:05:39,605 --> 00:05:40,506
+I don't know how fast
+
+235
+00:05:40,506 --> 00:05:41,908
+people are going to adapt.
+
+236
+00:05:41,908 --> 00:05:42,875
+It's possible.
+
+237
+00:05:42,875 --> 00:05:44,344
+It'll be it'll it'll
+
+238
+00:05:44,344 --> 00:05:45,912
+it'll it'll all be okay.
+
+239
+00:05:45,912 --> 00:05:47,480
+But I think that's
+
+240
+00:05:47,480 --> 00:05:49,615
+I think that's too sanguine an approach.
+
+241
+00:05:49,615 --> 00:05:50,416
+I think we do
+
+242
+00:05:50,416 --> 00:05:51,884
+need to be raising the alarm.
+
+243
+00:05:51,884 --> 00:05:53,453
+I think we do need to be concerned
+
+244
+00:05:53,453 --> 00:05:53,786
+about it.
+
+245
+00:05:53,786 --> 00:05:55,221
+I think policymakers
+
+246
+00:05:55,221 --> 00:05:56,689
+do need to worry about it.
+
+247
+00:05:56,689 --> 00:05:58,358
+If they do worry and they do act,
+
+248
+00:05:58,358 --> 00:05:59,792
+then maybe we can prevent it.
+
+249
+00:05:59,792 --> 00:06:00,793
+We're not going to prevent it
+
+250
+00:06:00,793 --> 00:06:01,861
+just by saying everything's
+
+251
+00:06:01,861 --> 00:06:02,595
+going to be okay.
+
+252
+00:06:02,595 --> 00:06:03,963
+Do we as a society,
+
+253
+00:06:03,963 --> 00:06:04,797
+even understand
+
+254
+00:06:04,797 --> 00:06:06,699
+the potential inequalities
+
+255
+00:06:06,699 --> 00:06:08,201
+that this may amplify?
+
+256
+00:06:09,502 --> 00:06:12,538
+and also the impact just on what?
+
+257
+00:06:13,005 --> 00:06:14,107
+Like I have a little kids,
+
+258
+00:06:14,107 --> 00:06:14,774
+I have a five year old
+
+259
+00:06:14,774 --> 00:06:16,042
+and a three year old.
+
+260
+00:06:16,042 --> 00:06:19,412
+What do they grow up aspiring to?
+
+261
+00:06:19,445 --> 00:06:20,947
+If machines can do
+
+262
+00:06:20,947 --> 00:06:23,182
+pretty much everything better,
+
+263
+00:06:23,182 --> 00:06:23,950
+what is the
+
+264
+00:06:23,950 --> 00:06:24,517
+what does it do
+
+265
+00:06:24,517 --> 00:06:28,121
+to initiative or drive or striving?
+
+266
+00:06:28,621 --> 00:06:29,822
+And I don't know the answer to that,
+
+267
+00:06:29,822 --> 00:06:32,258
+but it concerns me.
+
+268
+00:06:32,258 --> 00:06:34,060
+Let's let's take those questions
+
+269
+00:06:34,060 --> 00:06:34,627
+one by one.
+
+270
+00:06:34,627 --> 00:06:36,229
+Those those things do concern me.
+
+271
+00:06:36,229 --> 00:06:37,930
+But I do have I do have thoughts on them,
+
+272
+00:06:37,930 --> 00:06:39,799
+you know, in terms of inequality.
+
+273
+00:06:39,799 --> 00:06:41,234
+I'm worried about this.
+
+274
+00:06:41,234 --> 00:06:41,801
+You know, there's a
+
+275
+00:06:41,801 --> 00:06:43,669
+there's an inherent social contract
+
+276
+00:06:43,669 --> 00:06:45,571
+in, in, in democracy
+
+277
+00:06:45,571 --> 00:06:47,106
+where ultimately, you know,
+
+278
+00:06:47,106 --> 00:06:49,075
+the ordinary person
+
+279
+00:06:49,075 --> 00:06:50,777
+has a certain amount of leverage
+
+280
+00:06:50,777 --> 00:06:51,744
+because they're contributing
+
+281
+00:06:51,744 --> 00:06:52,412
+to the economy.
+
+282
+00:06:52,412 --> 00:06:53,012
+If that
+
+283
+00:06:53,012 --> 00:06:54,313
+if that leverage goes away,
+
+284
+00:06:54,313 --> 00:06:56,649
+then it's it's hard to make democracy,
+
+285
+00:06:56,649 --> 00:06:58,017
+it's harder to make democracies
+
+286
+00:06:58,017 --> 00:06:58,818
+work, and it's harder
+
+287
+00:06:58,818 --> 00:07:00,420
+to prevent concentration of power.
+
+288
+00:07:00,420 --> 00:07:01,687
+And so, you know,
+
+289
+00:07:01,687 --> 00:07:03,156
+we we need to make
+
+290
+00:07:03,156 --> 00:07:05,291
+sure that the ordinary person maintains
+
+291
+00:07:05,291 --> 00:07:06,359
+economic leverage
+
+292
+00:07:06,359 --> 00:07:07,727
+and has a way to make a living
+
+293
+00:07:07,727 --> 00:07:10,563
+or our society, our social contract work.
+
+294
+00:07:10,563 --> 00:07:12,331
+And that's why I think it's important.
+
+295
+00:07:12,331 --> 00:07:13,266
+During testing,
+
+296
+00:07:13,266 --> 00:07:14,400
+your company's latest
+
+297
+00:07:14,400 --> 00:07:15,168
+chat bot, Claude
+
+298
+00:07:15,168 --> 00:07:17,770
+for, was capable of
+
+299
+00:07:17,770 --> 00:07:19,439
+what was described as extreme
+
+300
+00:07:19,439 --> 00:07:21,707
+blackmail, specifically, I understand
+
+301
+00:07:21,707 --> 00:07:22,708
+it threatened to reveal
+
+302
+00:07:22,708 --> 00:07:23,810
+an engineer's
+
+303
+00:07:23,810 --> 00:07:25,978
+extramarital extramarital affair
+
+304
+00:07:25,978 --> 00:07:26,712
+when it was told
+
+305
+00:07:26,712 --> 00:07:28,781
+it would be taken offline and replaced.
+
+306
+00:07:28,781 --> 00:07:30,383
+This was a simulation.
+
+307
+00:07:30,383 --> 00:07:31,851
+Were you surprised by that?
+
+308
+00:07:31,851 --> 00:07:34,620
+And what does that I mean?
+
+309
+00:07:34,620 --> 00:07:36,389
+That freaked me out when I
+
+310
+00:07:36,389 --> 00:07:37,890
+when I read that. What does that mean?
+
+311
+00:07:39,091 --> 00:07:39,425
+Yeah.
+
+312
+00:07:39,425 --> 00:07:40,593
+So so just to be clear
+
+313
+00:07:40,593 --> 00:07:41,861
+and to put this in context,
+
+314
+00:07:41,861 --> 00:07:43,496
+I mean, this was this was,
+
+315
+00:07:43,496 --> 00:07:43,796
+you know,
+
+316
+00:07:43,796 --> 00:07:44,931
+as you said, a behavior
+
+317
+00:07:44,931 --> 00:07:46,432
+that that that emerged
+
+318
+00:07:46,432 --> 00:07:47,667
+during kind of extreme
+
+319
+00:07:47,667 --> 00:07:48,534
+testing of the model.
+
+320
+00:07:48,534 --> 00:07:50,002
+So if you were to make an analogy to,
+
+321
+00:07:50,002 --> 00:07:50,269
+you know,
+
+322
+00:07:50,269 --> 00:07:52,004
+cars, this is like, well,
+
+323
+00:07:52,004 --> 00:07:54,240
+you deliberately put the car on the icy
+
+324
+00:07:54,240 --> 00:07:55,374
+road possible,
+
+325
+00:07:55,374 --> 00:07:57,143
+you know, you mess with the brakes
+
+326
+00:07:57,143 --> 00:07:59,111
+and you know, you, you do that
+
+327
+00:07:59,111 --> 00:08:00,713
+so you can see if you really stress
+
+328
+00:08:00,713 --> 00:08:02,048
+test the thing, you know, you can,
+
+329
+00:08:02,048 --> 00:08:02,381
+you know,
+
+330
+00:08:02,381 --> 00:08:04,584
+then you can make the crash dummy blower.
+
+331
+00:08:04,584 --> 00:08:06,185
+so this this isn't something
+
+332
+00:08:06,185 --> 00:08:06,686
+that, you know,
+
+333
+00:08:06,686 --> 00:08:08,554
+the model does in practice,
+
+334
+00:08:08,554 --> 00:08:09,689
+in actual usage.
+
+335
+00:08:09,689 --> 00:08:11,624
+But but the reason we stress test
+
+336
+00:08:11,624 --> 00:08:13,292
+the models these way this way
+
+337
+00:08:13,292 --> 00:08:13,793
+is, you know,
+
+338
+00:08:13,793 --> 00:08:15,561
+that's the best way to to test
+
+339
+00:08:15,561 --> 00:08:17,129
+for and prevent problems
+
+340
+00:08:17,129 --> 00:08:18,030
+in the real world. So.
+
+341
+00:08:18,030 --> 00:08:19,699
+Right. I see us doing this
+
+342
+00:08:20,800 --> 00:08:21,434
+I think.
+
+343
+00:08:21,434 --> 00:08:22,168
+Yeah. Yeah.
+
+344
+00:08:22,168 --> 00:08:24,270
+No, but you know, you you
+
+345
+00:08:24,270 --> 00:08:26,038
+you know exactly you what you want,
+
+346
+00:08:26,038 --> 00:08:27,139
+but you want to turn
+
+347
+00:08:27,139 --> 00:08:28,674
+every adversarial condition
+
+348
+00:08:28,674 --> 00:08:30,643
+up to the max all at once.
+
+349
+00:08:30,643 --> 00:08:32,478
+And it's only by testing in that
+
+350
+00:08:32,478 --> 00:08:33,646
+you get the model to,
+
+351
+00:08:33,646 --> 00:08:34,680
+to not do that,
+
+352
+00:08:34,680 --> 00:08:36,015
+to not do that in the real world.
+
+353
+00:08:36,015 --> 00:08:38,718
+So I wasn't surprised by these behaviors.
+
+354
+00:08:38,718 --> 00:08:39,619
+But you know, this is
+
+355
+00:08:39,619 --> 00:08:40,720
+this is an example of how
+
+356
+00:08:40,720 --> 00:08:42,288
+we have to be very careful
+
+357
+00:08:42,288 --> 00:08:44,757
+in how we we take control of AI systems.
+
+358
+00:08:44,757 --> 00:08:45,758
+I mean, does it
+
+359
+00:08:45,758 --> 00:08:46,626
+the obvious question is,
+
+360
+00:08:46,626 --> 00:08:49,695
+does that pretend AI becoming self-aware
+
+361
+00:08:49,695 --> 00:08:51,030
+and which could
+
+362
+00:08:51,030 --> 00:08:53,733
+and could that lead to dire consequences?
+
+363
+00:08:53,733 --> 00:08:56,102
+I, I certainly don't exclude the concept.
+
+364
+00:08:56,102 --> 00:08:57,103
+We have a couple people
+
+365
+00:08:57,103 --> 00:08:59,305
+who are actually working on this topic.
+
+366
+00:08:59,305 --> 00:09:00,806
+You know, as crazy as it sounds,
+
+367
+00:09:00,806 --> 00:09:01,207
+you know,
+
+368
+00:09:01,207 --> 00:09:01,641
+do do
+
+369
+00:09:01,641 --> 00:09:03,543
+AI systems have have,
+
+370
+00:09:03,543 --> 00:09:05,912
+you know, morally significant feelings?
+
+371
+00:09:05,912 --> 00:09:07,647
+I would guess that they don't right now.
+
+372
+00:09:07,647 --> 00:09:08,281
+But, you know,
+
+373
+00:09:08,281 --> 00:09:09,582
+when you run an AI company,
+
+374
+00:09:09,582 --> 00:09:10,750
+you know, these crazy
+
+375
+00:09:10,750 --> 00:09:12,018
+seeming questions are things
+
+376
+00:09:12,018 --> 00:09:13,653
+that you are things that you study.
+
+377
+00:09:13,653 --> 00:09:14,220
+So I would say
+
+378
+00:09:14,220 --> 00:09:15,721
+this is probably not the case now.
+
+379
+00:09:15,721 --> 00:09:16,622
+But again,
+
+380
+00:09:16,622 --> 00:09:18,324
+the field is advancing so fast
+
+381
+00:09:18,324 --> 00:09:19,191
+that I don't
+
+382
+00:09:19,191 --> 00:09:20,092
+I don't think you can
+
+383
+00:09:20,092 --> 00:09:21,961
+you can exclude even crazy
+
+384
+00:09:21,961 --> 00:09:23,029
+sounding things like, yes.
+
+385
+00:09:23,029 --> 00:09:25,097
+What are practical steps
+
+386
+00:09:25,097 --> 00:09:26,966
+people should take to be prepared?
+
+387
+00:09:26,966 --> 00:09:27,333
+I mean,
+
+388
+00:09:28,434 --> 00:09:28,935
+ordinary
+
+389
+00:09:28,935 --> 00:09:31,938
+citizens, me, lawmakers.
+
+390
+00:09:32,071 --> 00:09:34,707
+What do you advise?
+
+391
+00:09:34,707 --> 00:09:36,242
+Yeah. You know, lawmakers.
+
+392
+00:09:36,242 --> 00:09:38,711
+I really yeah.
+
+393
+00:09:38,711 --> 00:09:39,979
+Well, let's take a one by one.
+
+394
+00:09:39,979 --> 00:09:40,212
+You know,
+
+395
+00:09:40,212 --> 00:09:41,747
+I think for ordinary citizens,
+
+396
+00:09:41,747 --> 00:09:43,282
+I think it's it's very important,
+
+397
+00:09:43,282 --> 00:09:43,749
+you know,
+
+398
+00:09:43,749 --> 00:09:45,217
+learn to use AI, learn
+
+399
+00:09:45,217 --> 00:09:45,785
+to understand
+
+400
+00:09:45,785 --> 00:09:47,353
+where the technology is going.
+
+401
+00:09:47,353 --> 00:09:48,788
+If you're not blindsided,
+
+402
+00:09:48,788 --> 00:09:49,722
+you have a much better
+
+403
+00:09:49,722 --> 00:09:50,790
+chance of adapting.
+
+404
+00:09:50,790 --> 00:09:51,557
+There's some,
+
+405
+00:09:51,557 --> 00:09:52,892
+you know, better world,
+
+406
+00:09:52,892 --> 00:09:54,126
+you know, at least in the short term,
+
+407
+00:09:54,126 --> 00:09:55,428
+at least for now. We should take it.
+
+408
+00:09:55,428 --> 00:09:56,362
+Take it bit by bit.
+
+409
+00:09:56,362 --> 00:09:56,829
+Where?
+
+410
+00:09:56,829 --> 00:09:58,497
+Where, you know, everyone learns to use,
+
+411
+00:09:58,497 --> 00:10:00,166
+everyone learns to use AI better.
+
+412
+00:10:00,166 --> 00:10:01,601
+And and you know that that speeds up
+
+413
+00:10:01,601 --> 00:10:02,435
+the adaptation
+
+414
+00:10:02,435 --> 00:10:03,035
+that is,
+
+415
+00:10:03,035 --> 00:10:04,604
+is definitely going to happen eventually,
+
+416
+00:10:04,604 --> 00:10:05,371
+but it will be less
+
+417
+00:10:05,371 --> 00:10:07,740
+painful if it if it happens quickly.
+
+418
+00:10:07,740 --> 00:10:08,941
+for, for lawmakers,
+
+419
+00:10:08,941 --> 00:10:09,141
+you know,
+
+420
+00:10:09,141 --> 00:10:10,843
+I would say really, really,
+
+421
+00:10:10,843 --> 00:10:11,677
+really, really,
+
+422
+00:10:11,677 --> 00:10:13,412
+really be aware of these issues.
+
+423
+00:10:13,412 --> 00:10:14,914
+And, you know, we're trying very hard
+
+424
+00:10:14,914 --> 00:10:15,815
+to produce
+
+425
+00:10:15,815 --> 00:10:17,550
+data on the economic impact,
+
+426
+00:10:17,550 --> 00:10:19,518
+not taking off the table.
+
+427
+00:10:19,518 --> 00:10:20,653
+You know, some, some,
+
+428
+00:10:20,653 --> 00:10:22,455
+some fairly radical notions, like,
+
+429
+00:10:22,455 --> 00:10:22,888
+I wouldn't
+
+430
+00:10:22,888 --> 00:10:24,557
+exclude the notion of,
+
+431
+00:10:24,557 --> 00:10:24,890
+you know,
+
+432
+00:10:24,890 --> 00:10:26,926
+levying attacks on AI companies, right.
+
+433
+00:10:26,926 --> 00:10:29,462
+If I create huge total wealth,
+
+434
+00:10:29,462 --> 00:10:30,463
+you know, a lot about
+
+435
+00:10:30,463 --> 00:10:31,697
+will will by default
+
+436
+00:10:31,697 --> 00:10:33,165
+go to the AI companies and,
+
+437
+00:10:33,165 --> 00:10:34,533
+you know, less to ordinary people.
+
+438
+00:10:34,533 --> 00:10:35,101
+And so,
+
+439
+00:10:35,101 --> 00:10:35,735
+you know, definitely
+
+440
+00:10:35,735 --> 00:10:37,503
+not in my economic interest to say that,
+
+441
+00:10:37,503 --> 00:10:38,270
+but I think,
+
+442
+00:10:38,270 --> 00:10:39,105
+I think this is something
+
+443
+00:10:39,105 --> 00:10:39,939
+we should consider.
+
+444
+00:10:39,939 --> 00:10:40,339
+And, you know,
+
+445
+00:10:40,339 --> 00:10:42,308
+I think it shouldn't be a Partizan thing.
+
+446
+00:10:42,308 --> 00:10:43,442
+Dario, thank you so much.
+
+447
+00:10:43,442 --> 00:10:44,910
+It's really fascinating.
+
+448
+00:10:44,910 --> 00:10:46,612
+Yeah. thank you for having me, Anderson.

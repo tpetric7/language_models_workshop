@@ -1,0 +1,425 @@
+---
+title: "Klassifikation potenzieller Kollokationen"
+subtitle: "LLMs als Entscheidungsträger"
+format: html
+---
+
+## V1 (tidyllm)
+
+Verwendete Bibliothek: tidyllm
+
+### Installation
+
+```{r}
+#| eval: false
+
+# install.packages("remotes")
+remotes::install_github("bakaburg1/llmR") # Für einfachen Zugang zu OpenAI & anderen LLMs
+install.packages("tidyllm")
+install.packages("purrr") # Für map-Funktionen
+install.packages("dplyr") # Für Datenmanipulation
+
+```
+
+
+### Authentifizierung
+
+Für kommerzielle Modelle:
+
+```{r}
+library(tidyverse)
+library(tidyllm)
+library(dotenv)
+
+dotenv::load_dot_env(file = ".env")
+# kostenlose LLMs (aber limitiert)
+api_key <- Sys.getenv("GROQ_API_KEY")
+# kostenpflichtige LLMs
+api_key <- Sys.getenv("OPENAI_API_KEY")
+
+```
+
+Für lokal installierte Ollama-Modelle ist Authentifizierung nicht notwendig.
+
+### Wortverbindungen
+
+```{r}
+wortverbindungen <- c(
+  "eine Entscheidung treffen",
+  "ein Auto fahren",
+  "gute Idee",
+  "ein Gespräch führen",
+  "ein Glas trinken"
+)
+```
+
+Extrahiere Ngramme aus einem Text:
+
+```{r}
+#| eval: false
+
+library(tidytext)
+library(dplyr)
+
+# Text einlesen
+text <- readLines("data/3446.txt", encoding = "UTF-8")
+
+# Bigramme extrahieren
+bigrams <- tibble(text = text) %>%
+  unnest_tokens(ngram, text, token = "ngrams", n = 2) %>%
+  count(ngram, sort = TRUE) %>%
+  filter(n > 1)  # Nur n-grams, die öfter als einmal vorkommen
+
+# Trigramme extrahieren
+trigrams <- tibble(text = text) %>%
+  unnest_tokens(ngram, text, token = "ngrams", n = 3) %>%
+  count(ngram, sort = TRUE) %>%
+  filter(n > 1)  # Nur n-grams, die öfter als einmal vorkommen
+
+# Bigramme und Trigramme kombinieren
+all_ngrams <- bind_rows(
+  bigrams,
+  trigrams
+) %>%
+  arrange(desc(n))  # Sortieren nach Häufigkeit
+
+# N-grams in einen Vektor umwandeln und NAs entfernen
+wortverbindungen <- na.omit(all_ngrams$ngram)
+wortverbindungen <- as.character(wortverbindungen)
+
+# Zeige die ersten 20 Einträge
+head(wortverbindungen, 20)
+```
+
+
+### Prompt
+
+```{r}
+generate_prompt <- function(wv) {
+  glue::glue(
+    "Beurteile, ob die folgende Wortverbindung eine Kollokation im sprachwissenschaftlichen Sinne ist.\n\n",
+    "Wortverbindung: '{wv}'\n\n",
+    "Kriterien:\n",
+    "- Häufige gemeinsame Verwendung\n",
+    "- Eingeschränkte Substituierbarkeit\n",
+    "- Nicht wörtlich ableitbare Bedeutung oder idiomatischer Gebrauch\n\n",
+    "Antwortformat: Ja oder Nein, mit kurzer Begründung."
+  )
+}
+
+```
+
+
+### Anfrage an LLM
+
+`llm_message(prompt)`: Erstellt ein LLMMessage-Objekt mit dem gegebenen Prompt.   
+`chat(nachricht, ...)`: Sendet die Nachricht an das Modell und erhält die Antwort als erweitertes LLMMessage-Objekt.   
+`get_metadata()`: Extrahiert Metadaten aus dem LLMMessage-Objekt, wie z.B. Tokenanzahl, Modellname und andere relevante Informationen.
+
+
+*Antwortverarbeitung*: Die Funktion `get_reply()` extrahiert die Antwort des Modells als Zeichenkette. Falls strukturiertere Ausgaben benötigt werden, kann `get_reply_data()` verwendet werden.
+
+*Fehlerbehandlung*: Für eine robuste Anwendung sollten Fehlerbehandlungen implementiert werden, um beispielsweise Netzwerkprobleme oder unerwartete Modellantworten zu handhaben.
+
+#### Ollama
+
+```{r}
+library(progressr)
+
+bewerte_kollokation_qwen <- function(wv) {
+  prompt <- generate_prompt(wv)
+  nachricht <- llm_message(prompt)
+  antwort <- chat(nachricht, ollama(.model = "qwen2.5:14b-instruct"))
+  
+  tibble::tibble(
+    Wortverbindung = wv,
+    Antwort = get_reply(antwort),
+    Modell = get_metadata(antwort)$model,
+    Prompt_Tokens = get_metadata(antwort)$prompt_tokens,
+    Antwort_Tokens = get_metadata(antwort)$completion_tokens,
+    Gesamt_Tokens = get_metadata(antwort)$total_tokens
+  )
+}
+
+# Anwendung der Funktion auf jede Wortverbindung
+handlers("txtprogressbar")
+with_progress({
+  p <- progressor(steps = length(wortverbindungen))
+  ergebnisse_qwen <- map_dfr(wortverbindungen, function(wv) {
+    p(message = paste("Verarbeite:", wv))
+    bewerte_kollokation_qwen(wv)
+  })
+})
+
+# Anzeige der Ergebnisse
+ergebnisse_qwen
+```
+
+
+Mit Fehlerbehandlung und Anzeige fehlgeschlagener API-Anfragen, die dann herausgefiltert werden können:
+
+```{r}
+#| eval: false
+
+library(progressr)
+library(purrr)
+library(tibble)
+library(dplyr)
+
+# Funktion mit Fehlerbehandlung
+bewerte_kollokation_qwen <- function(wv) {
+  tryCatch({
+    prompt <- generate_prompt(wv)
+    nachricht <- llm_message(prompt)
+    antwort <- chat(nachricht, ollama(.model = "qwen2.5:14b-instruct"))
+    
+    tibble(
+      Wortverbindung = wv,
+      Antwort = get_reply(antwort),
+      Modell = get_metadata(antwort)$model,
+      Prompt_Tokens = get_metadata(antwort)$prompt_tokens,
+      Antwort_Tokens = get_metadata(antwort)$completion_tokens,
+      Gesamt_Tokens = get_metadata(antwort)$total_tokens,
+      Fehler = NA_character_
+    )
+  }, error = function(e) {
+    tibble(
+      Wortverbindung = wv,
+      Antwort = NA_character_,
+      Modell = NA_character_,
+      Prompt_Tokens = NA_integer_,
+      Antwort_Tokens = NA_integer_,
+      Gesamt_Tokens = NA_integer_,
+      Fehler = as.character(e$message)
+    )
+  })
+}
+
+# Anwendung mit Fortschrittsanzeige und Logging
+handlers("txtprogressbar")
+with_progress({
+  p <- progressor(steps = length(wortverbindungen))
+  ergebnisse_qwen <- map_dfr(wortverbindungen, function(wv) {
+    p(message = paste("Verarbeite:", wv))
+    bewerte_kollokation_qwen(wv)
+  })
+})
+
+# Ergebnisse anzeigen
+ergebnisse_qwen
+```
+
+```{r}
+# Analysiere die Antworten
+ergebnisse_qwen %>%
+  mutate(
+    Antwort_typ = case_when(
+      str_starts(Antwort, "Ja") ~ "Ja",
+      str_starts(Antwort, "Nein") ~ "Nein",
+      TRUE ~ "Sonstiges"
+    )
+  ) %>%
+  count(Antwort_typ) %>%
+  arrange(desc(n))
+```
+
+#### Openai
+
+Mit Authentifizierung im Falle von kommerziellen Anbietern (OpenAI, Google, Anthropic, Groq, Grok, ...):
+
+```{r}
+bewerte_kollokation_o4mini <- function(wv) {
+  
+  api_key <- Sys.getenv("OPENAI_API_KEY") 
+  # # Alternativ auch Hardcoding möglich, aber nicht empfehlenswert:
+  # api_key = "sk......."
+  
+  # Überprüfen, ob der API-Schlüssel vorhanden ist
+  if (api_key == "") {
+    stop("API-Schlüssel nicht gefunden. Bitte setzen Sie die Umgebungsvariable 'OPENAI_API_KEY'.")
+  }
+  
+  prompt <- generate_prompt(wv)
+  nachricht <- llm_message(prompt)
+  antwort <- chat(nachricht, openai(.model = "o4-mini"))
+  
+  tibble::tibble(
+    Wortverbindung = wv,
+    Antwort = get_reply(antwort),
+    Modell = get_metadata(antwort)$model,
+    Prompt_Tokens = get_metadata(antwort)$prompt_tokens,
+    Antwort_Tokens = get_metadata(antwort)$completion_tokens,
+    Gesamt_Tokens = get_metadata(antwort)$total_tokens
+  )
+}
+
+# Anwendung der Funktion auf jede Wortverbindung
+ergebnisse_o4mini <- map_dfr(wortverbindungen, bewerte_kollokation_o4mini)
+
+# Anzeige der Ergebnisse
+ergebnisse_o4mini
+```
+
+
+
+### Mehrere Anfragen und Modelle
+
+#### Konstruktionen
+
+Die Konstruktionen werden nun in einem tibble (einem Datensatz) gesammelt. Oben haben wir einen Vektor (Datenserie) verwendet.
+
+```{r}
+wortverbindungen <- tibble(
+  wortverbindung = c(
+    "eine Entscheidung treffen",
+    "ein Auto fahren",
+    "gute Idee",
+    "ein Gespräch führen",
+    "ein Glas trinken"
+  )
+)
+
+```
+
+
+
+#### Prompt-Formulierungen
+
+```{r}
+# Verschiedene Prompt-Formulierungen
+prompts <- tibble(
+  prompt_id = 1:3,
+  prompt_template = c(
+    "Beurteile, ob die folgende Wortverbindung eine Kollokation im sprachwissenschaftlichen Sinne ist:\n\n'{wortverbindung}'\n\nAntwort mit 'Ja' oder 'Nein' und einer kurzen Begründung.",
+    "Ist '{wortverbindung}' eine feste Wortverbindung im Deutschen? Antworte mit 'Ja' oder 'Nein' und erkläre kurz.",
+    "Handelt es sich bei '{wortverbindung}' um eine Kollokation? Antworte mit 'Ja' oder 'Nein' und gib eine kurze Begründung."
+  )
+)
+```
+
+
+#### Raster erstellen
+
+Die Funktion `glue()` arbeitet standardmäßig nicht mit Vektoren, die Platzhalter enthalten. Um dies zu umgehen, sollten Sie `glue_data()` verwenden, das speziell für die Verarbeitung von Datenrahmenzeilen mit Platzhaltern entwickelt wurde. Eine Lösung ist die Verwendung von `glue_data()` mit `rowwise()`:
+
+```{r}
+library(glue)
+
+# Liste der Modelle
+modelle <- c("gemma3:4b", "qwen2.5:14b-instruct")
+
+# Erstellen des Kombinationsrasters
+kombinationen <- expand_grid(
+  wortverbindungen,
+  prompts,
+  model = modelle
+) %>%
+  rowwise() %>%
+  mutate(
+    prompt = glue_data(cur_data(), prompt_template),
+    llm_msg = list(llm_message(prompt))
+  ) %>%
+  ungroup()
+
+```
+
+Anzeige der list-Objekte in der Spalte llm_msg:
+
+```{r}
+# Anwendung der chat-Funktion auf die LLMMessage-Objekte
+kombinationen %>%
+  mutate(
+    antwort = map2(llm_msg, model, ~ chat(.x, ollama(.model = .y))),
+    antwort_text = map_chr(antwort, get_reply),
+    modell_info = map(antwort, get_metadata)
+  )
+
+```
+
+
+
+#### Anfragen an LLMs
+
+Mehrere Anfragen (prompts) an mehrere LLMs stellen:
+
+```{r}
+# Funktion zur Durchführung der Anfrage und Sammlung der Ergebnisse
+verarbeite_anfrage <- function(llm_msg, model) {
+  antwort <- chat(llm_msg, ollama(.model = model))
+  tibble(
+    antwort_text = get_reply(antwort),
+    modell = get_metadata(antwort)$model,
+    prompt_tokens = get_metadata(antwort)$prompt_tokens,
+    antwort_tokens = get_metadata(antwort)$completion_tokens,
+    gesamt_tokens = get_metadata(antwort)$total_tokens
+  )
+}
+
+# Anwenden der Funktion auf alle Kombinationen
+ergebnisse <- kombinationen %>%
+  mutate(result = map2(llm_msg, model, verarbeite_anfrage)) %>%
+  unnest(result)
+
+```
+
+
+```{r}
+# Auswahl relevanter Spalten zur Anzeige
+ergebnisse_anzeige <- ergebnisse %>%
+  select(
+    wortverbindung,
+    prompt_id,
+    modell,
+    antwort_text,
+    prompt_tokens,
+    antwort_tokens,
+    gesamt_tokens
+  )
+
+ergebnisse_anzeige
+
+```
+
+#### Visualisierung
+
+Extraktion der Entscheidungen:
+
+```{r}
+ergebnisse <- ergebnisse |> 
+  # Extraktion der Entscheidungen mit regulären Ausdrücken (regex)
+  mutate(Entscheid = str_extract(antwort_text, "^\\bJa\\b|^\\bNein\\b"))
+```
+
+Abzählung der Entscheidungen nach Prompt und Modell:
+
+```{r}
+ergebnisse |> 
+  group_by(prompt_id, modell) |> 
+  count(Entscheid) |> 
+  pivot_wider(names_from = c(prompt_id, Entscheid), values_from = n) |> 
+  flextable::flextable()
+```
+
+Grapische Darstellung der Entscheidungen:
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+
+plot1 <- ergebnisse |> 
+  group_by(modell, prompt_id) |> 
+  count(Entscheid) |>
+  ggplot(aes(x = as.factor(Entscheid), y = n, fill = modell)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Entscheidungen gemäß Prompt und Modell", x = "Entscheidung", y = "Häufigkeit", fill="Modell:") +
+  theme_bw(22) +
+  # scale_y_continuous(labels = scales::label_percent(),limits = c(0,1)) +
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "top") +
+  facet_wrap(~ modell + prompt_id)
+
+ggsave("pics/collocations_llm_responses_barchart_p1.png", plot = plot1, width = 8, height = 6, dpi = 300, bg="white")
+
+plot1
+```
+

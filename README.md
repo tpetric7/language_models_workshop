@@ -9,6 +9,7 @@ Click the link below to open the notebook in Google Colab:
 - [Groq API Basic (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Groq_API_basic_Google_Colab.ipynb)
 - [Groq API Summarize (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Groq_API_summarize_Google_Colab.ipynb)
 - [Sentiment Trump Inauguration 2025 (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Sentiment_in_colors_Trump_Inaugural_Speech.ipynb)
+- [Sentiment Trump Inauguration 2025 vs Anthropic CEO Warning(Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Sentiment_Trump_CEO_stats_colored.ipynb)
 - [Sentiment Cyberattack (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Sentiment_in_colors_Cyberattack.ipynb)
 - [Sentiment Cyberattack (R)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/R_Py_sentiment_Colab.ipynb)
 - [Semantic Search txtai (Python)](https://colab.research.google.com/github/tpetric7/language_models_workshop/blob/main/Semantic_Search_txtai.ipynb)
@@ -37,6 +38,8 @@ Click the link below to open and download the Python /- or R -- file and run it 
 - [Topics in the newspaper Dnevnik (R, Groq, HuggingFace model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.qmd) - run the Quarto markdown file with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
 - [Topics in the newspaper Dnevnik (R, Groq, HuggingFace model, BERTopicr)](https://github.com/tpetric7/language_models_workshop/blob/main/topics_in_dnevnik.R) - run the R script with RStudio (cf. to https://github.com/tpetric7/bertopic-r).
 - [BERTopic Document Visualization of Spiegel articles (Python, local HuggingFace transformer model)](https://github.com/tpetric7/language_models_workshop/blob/main/bertopic_spiegel.py) - run the Python script with 'streamlit run bertopic_spiegel.py'. 
+- [Ngrams classified as collocations by LLMs Demo 1)](https://github.com/tpetric7/language_models_workshop/blob/main/collocations_llm.qmd) - run the R Quarto markdown file with RStudio. 
+- [Ngrams classified as collocations by LLMs Demo 2)](https://github.com/tpetric7/language_models_workshop/blob/main/collocations_llm_demo2.qmd) - run the R Quarto markdown file with RStudio. 
 - [Streamlit Chat with PDF (Python, local Ollama model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf.py) - run it with 'streamlit run chat_with_pdf.py'.
 - [Chainlit Chat with PDF (Python, Ollama, local Slovenian model)](https://github.com/tpetric7/language_models_workshop/blob/main/chat_with_pdf_sl.py) - run it with 'chainlit run chat_with_pdf_sl.py'.
 - [Transcribe Audio with Whisper in 3 lines of code (Python)](https://github.com/tpetric7/language_models_workshop/blob/main/transcribe_with_whisper.py)

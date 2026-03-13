@@ -1,0 +1,659 @@
+---
+title: "R statt Antconc 4.2.4"
+author: "Teodor Petrič"
+date: "2024-05-10"
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    # css: [style.css, TMwR.css]
+    # scss: [colors.scss]
+    # scss: [r4ds.scss]
+    # page-layout: full
+    toc: true
+    toc-depth: 5
+    toc-location: right
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    code-copy: hover
+    code-overflow: wrap
+    number-sections: true
+    number-depth: 5
+    callout-appearance: default
+    callout-icon: true
+    citations-hover: true
+    footnotes-hover: true
+    fig-width: 8
+    fig-height: 6
+    fig-align: left
+    fig-responsive: true
+    fig-cap-location: bottom
+    tbl-cap-location: top
+    lang: en
+    self-contained: true
+    anchor-sections: true
+    smooth-scroll: true
+    hypothesis: true
+  pdf:
+    documentclass: scrreprt # scrbook
+    keep-tex: true
+    include-in-header: 
+      text: |
+        \usepackage{makeidx}
+        \makeindex
+    include-after-body: 
+      text: |
+        \printindex
+  epub:
+    prefer-html: true # html won't show !!! but execution does not halt
+    cover-image: "wordcloud_prozess_lemmas.png"
+  docx:
+    reference-doc: custom-reference.docx
+
+editor: source
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidytext)
+library(tidylo)
+library(ggthemes)
+library(readtext)
+library(quanteda)
+library(quanteda.textstats)
+library(quanteda.textplots)
+library(wordcloud2)
+source("wordcloud2a.R")
+library(plotly)
+library(htmlwidgets)
+library(DT)
+
+```
+
+
+Begriffserklärungen von `OpenAI GPT4`.   
+Die Datei mit den Beschreibungen habe ich mit `R` in `RStudio` zusammengestellt.   
+
+
+## Korpusbildung
+
+Ein Korpus kann man mit R auf verschiedene Arten erstellen. Eine ist beispielsweise die Verwendung des Programmpakets `quanteda`, eine Alternative ist die Verwendung des Pakets `tidyverse`. Das Programmpaket `readtext` erleichtert das Öffnen von Textdateien. 
+
+```{r}
+novels <- readtext("data/novels/*.txt", encoding = "UTF-8", docvarsfrom = "filenames")
+novels
+```
+
+Wir wählen *Twains Tom Sawyer* und *Kafkas Prozess* zur Analyse aus.
+
+```{r}
+litcorp <- novels |> 
+  filter(docvar3 == "Prozess" | docvar3 == "Tom") |> 
+  as_tibble()
+litcorp |> rmarkdown::paged_table()
+```
+
+
+## Stoppwörter
+
+Wir können beispielsweise eine Stoppwortliste für die deutsche Sprache hinzufügen. Mit dieser können wir Wörter herausfiltern, die die Inhaltsanalyse stören. 
+
+Stoppwörter:   
+- *stop_de* (Liste, verendbar z.B. mit quanteda-Funktionen),   
+- *stop_de_tidy* (Datensatz, verwendbar mit tidyverse-Funktionen).   
+
+```{r}
+# 1st alternative
+stop_de <- stopwords::stopwords(language = "de")
+
+# 2nd alternative (stopwords copied from Voyant Tools)
+stop_de <- read_lines("data/stopwords/stopwords_de_voyant_tools.txt")
+stop_de <- c(stop_de, "dass", "s", "na", "ne", "n")
+
+# as dataframe
+stop_de_tidy <- stop_de |> 
+  as_tibble() |> 
+  rename(word = value)
+
+head(stop_de_tidy)
+```
+
+*Stoppwortlisten* findet man im Internet für verschiedene Sprachen (z.B. in `Github` Repositorien). Die im Beispiel verwendete Stoppwortliste habe ich aus dem web-basierten Programm `Voyant Tools` herauskopiert und als Textdatei *stopwords_de.txt* gespeichert.
+
+Es können auch andere Listen importiert werden (z.B. Lemmalisten, Pos-Tags u.a.), wobei das Format ensprechend angepasst werden muss.
+
+Bei den einzelnen unten folgenden Analysemöglichkeiten gibt es neben grundlegenden Optionen auch fortgeschrittene Suchmöglichkeiten, die jedoch in dieser Beschreibung 
+nicht erläutert werden. 
+
+
+## Wortliste
+
+Nach der Entfernung von Stoppwörtern können wir verschiedene Evidenzen erstellen und Analysen durchführen, z.B. eine Liste mit den am häufigsten vorkommenden Inhaltswörtern im Ziel - oder Referenzkorpus. Als Zielkorpus wählen wir *Kafkas Prozess*, als Referenzkorpus hingegen den Roman *Tom Sawyer* von *Mark Twain*. 
+
+Wie viele Wortformen kommen in den beiden Texten jeweils vor?
+
+```{r}
+wortsumme <- litcorp |> 
+  # Zerlegung in Tokens / Wörter 
+  unnest_tokens(word, text, "words") |>
+  # Gruppenbildung
+  group_by(docvar3) |> 
+  # Abzählen der Wörter 
+  summarise(wordsum = n())
+
+wortsumme_p <- wortsumme |> filter(docvar3=="Prozess") |> pull(wordsum)
+wortsumme_t <- wortsumme |> filter(docvar3=="Tom") |> pull(wordsum)
+
+wortsumme |> flextable::flextable()
+```
+
+Eine detaillierte Liste von Wortformen, vergleichbar mit der in Antconc erstellten. 
+
+```{r}
+wortliste <- litcorp |> 
+  # Zerlegung in Tokens / Wörter 
+  unnest_tokens(word, text, "words") |>
+  # Gruppenbildung
+  group_by(docvar3) |> 
+  add_count(docvar3, name = "wordsum") |> 
+  group_by(docvar3, wordsum) |> 
+  # Abzählen der Wörter 
+  count(word, name = "freq", sort = TRUE) |> 
+  # Normalisierte Frequenz (freq / 1 Million Wörter)
+  mutate(NormFreq = round(freq*10^6/wordsum, 2)) |> 
+  # Neusortierung
+  arrange(docvar3, -freq) |> 
+  # Rangfolge bilden
+  mutate(rank = row_number()) |> 
+  # Entfernen der Stoppwörter 
+  anti_join(stop_de_tidy, by = "word")
+
+# Prozess
+wortliste_p <- wortliste |> 
+  filter(docvar3=="Prozess")
+# Tom
+wortliste_t <- wortliste |> 
+  filter(docvar3=="Tom")
+
+```
+
+Zielkorpus:
+
+```{r}
+wortliste_p |> DT::datatable()
+
+```
+
+Die Tabelle zeigt:    
+- den Rangplatz einer Wortform (Rank),    
+- ihre  Tokenfrequenz (Gebrauchshäufigkeit, Freq),    
+- in wie vielen Texten eine Wortform vorkommt (Range),    
+- die normalisierte Frequenz (Tokenfrequenz pro Million Wörter: z.B. *tür* hat 178*10^6/71674 = 2483.47, wobei N = 71674 Tokens in Kafkas Roman).    
+
+Der prozentuale Anteil von Texten mit einer bestimmten Wortform (NormRange) wurde hier nicht berechnet, da das Zielkorpus aus nur einem Text besteht. 
+
+Referenzkorpus:
+
+```{r}
+wortliste_t |> DT::datatable()
+```
+
+
+
+## Konkordanz (KWIC)
+
+Eine *Konkordanz* (Keywords in Context) ist eine Liste von Kontexten, in den das von uns gesuchte Wort auftritt. Im Beispiel geben wir die Wortform *tür* ein, die laut Wortliste 178-mal im *Prozess* vorkommt.
+
+Der Wortstamm *Tür* kommt in *Kafkas* Roman noch häufiger vor. Um diese Kontextstellen zu ermitteln, können wir *reguläre Ausdrücke* (Regex - regular expressions) nutzen, z.B. `\b(\w+)?[Tt]ür(en)?\b `.
+
+`\b` Wortgrenze (border),   
+`^[A-Z]` großer Anfangsbuchstabe,   
+`\w+` ein oder mehrere Buchstaben oder Ziffern,    
+`()?` alles in der Klammer is optional,   
+`[Tt]` großes oder kleines "T".   
+
+In der Programmiersprache `R` müssen wir bei der Verwendung von regulären Ausdrücken einen doppelten Backslash setzen, z.B. statt `\w+` also `\\w+`.
+
+```{r}
+corp_p <- litcorp |> 
+  filter(docvar3=="Prozess") |> 
+  corpus()
+
+toks_p <- tokens(corp_p)
+
+conc_p <- kwic(toks_p, 
+               # nur Wortformen mit dem Substantivstamm 'Tür'
+     pattern = "\\b(\\w+)?[Tt]ür(en)?\\b", 
+     valuetype = "regex",
+     window = 5)
+
+conc_p_df <- as.data.frame(conc_p)
+
+conc_p_df |> DT::datatable()
+```
+
+Mit Hilfe des regulären Ausdrucks konnten 195 Textstellen mit dem Substantivstamm *Tür* gefunden werden (vgl. oben 178-mal *tür* - ohne regulären Ausdruck keine Pluralformen und keine Zusammensetzungen). 
+
+Zum Vergleich *Twains* Roman:
+
+```{r}
+corp_t <- litcorp |> 
+  filter(docvar3=="Tom") |> 
+  corpus()
+
+toks_t <- tokens(corp_t)
+
+conc_t <- kwic(toks_t, 
+               # nur Wortformen mit dem Substantivstamm 'Tür'
+     pattern = "\\b(\\w+)?[Tt]ür(en)?\\b", 
+     valuetype = "regex",
+     window = 5)
+
+conc_t_df <- as.data.frame(conc_t)
+
+conc_t_df |> DT::datatable()
+```
+
+
+Die regulären Ausdrücke können vorher auf der Webseite [Regex101](https://regex101.com/) konstruiert, ausprobiert und dann in `R` zur Suche eingesetzt werden (Anmerkung: in manchen Fällen gibt es Unterschiede zwischen Regex-Varianten oder besondere Einstellungen: z.B. muss man in `R` `case_insensitive=FALSE` setzen).
+
+
+## Dispersion
+
+### Visualisierung
+
+Die *Plot*-Option ermöglicht eine visuelle Darstellung der gefundenen Textstellen. Im Beispiel sehen wir, dass der Wortstamm *Tür* insbesondere in der Kurzgeschichte *Draußen vor der Tür* eine große Rolle spielt. Erkennbar ist die Verteilung, Streuung oder Konzentration dieses Wortstammes in der jeweiligen Geschichte.  
+
+```{r}
+pic01 <- textplot_xray(conc_p)
+pic01
+
+```
+
+
+```{r}
+corp <- litcorp |> 
+  corpus(docid_field = "docvar3")
+
+toks <- tokens(corp)
+
+conc <- kwic(toks, 
+               # nur Wortformen mit dem Substantivstamm 'Tür'
+     pattern = "\\b(\\w+)?[Tt]ür(en)?\\b", 
+     valuetype = "regex",
+     window = 5)
+
+# conc_df <- as.data.frame(conc)
+# conc_df |> DT::datatable()
+
+pic02 <- textplot_xray(conc)
+pic02 <- pic02 + 
+  aes(color = docname) + 
+  scale_color_manual(values = c('red', 'blue')) +
+  theme(legend.position = "none")
+pic02
+
+```
+
+
+### Berechnung der Dispersion
+
+In der Korpuslinguistik bezieht sich der Dispersionswert darauf, wie gleichmäßig ein Wort über verschiedene Teile eines Korpus verteilt ist. Ein hoher Dispersionswert bedeutet, dass das Wort in vielen verschiedenen Texten oder Textabschnitten des Korpus häufig vorkommt, während ein niedriger Wert darauf hindeutet, dass das Wort in wenigen Texten konzentriert ist.
+
+Es gibt mehrere Methoden zur Berechnung der Dispersion, aber eine gängige Methode ist die *Normalized Entropy Measure*. Diese Methode betrachtet die Verteilung der Frequenz eines Wortes über die verschiedenen Texte eines Korpus. Die Formel zur Berechnung der *Normalized Entropy Dispersion* ist:
+
+$$
+D = - \sum_{i=1}^n \left( \frac{f_i}{f} \log_2 \frac{f_i}{f} \right) \times \frac{1}{\log_2 n}
+$$
+wo:
+- $f_i$ die Häufigkeit des Wortes in einem Teil des Korpus (z.B. einem Text) ist,
+- $f$ die Gesamthäufigkeit des Wortes im gesamten Korpus ist,
+- $n$ die Anzahl der Teile ist, in die das Korpus unterteilt ist (z.B. die Anzahl der Texte),
+- $D$ der Dispersionswert ist.
+
+
+### Interpretation
+
+- **Nähe zu 1**: Ein Wert nahe 1 bedeutet eine sehr gleichmäßige Verteilung des Wortes über alle Teile des Korpus. Das Wort ist somit in allen untersuchten Segmenten relativ gleich verteilt.
+- **Nähe zu 0**: Ein Wert nahe 0 bedeutet, dass das Wort sehr ungleichmäßig verteilt ist, was darauf hindeutet, dass es möglicherweise in nur einem oder sehr wenigen Texten konzentriert auftritt.
+
+Die Dispersionswerte in der Beispielstabelle variieren von 0.683 bis 0.000. Die Dispersionswerte für die Wörter mit dem Stamm *Tür* in den Kurzgeschichten von Borchert geben Aufschluss darüber, wie gleichmäßig der Wortstamm über die analysierten Texte verteilt ist. Sie helfen uns zu verstehen, in welchem Maß das Wort bzw. der Wortstamm in verschiedenen Kontexten innerhalb des Gesamtkorpus verwendet wird. Hier ist, wie Sie die spezifischen Werte interpretieren können:
+
+1. **Hohe Dispersionswerte (z.B., 0.683)**: Dieser Wert zeigt an, dass das Wörter mit dem Wortstamm "Tür" recht gleichmäßig verteilt sind. Das deutet darauf hin, dass es ein häufiges und thematisch relevantes Wort in dieser Geschichte ist.
+
+2. **Mittlere Dispersionswerte (z.B., 0.592, 0.333, 0.274)**: Diese Werte weisen darauf hin, dass "Tür" in diesen Texten präsent ist.  Wörter mit diesem Wortstamm könnten nur in bestimmten Kontexten dieser Geschichten wichtiger sein, was sich in seiner ungleichmäßigen Verteilung widerspiegelt.
+
+3. **Niedrige Dispersionswerte (z.B., 0.000)**: Ein Dispersionswert von 0.000 bedeutet, dass "Tür" in den betreffenden Geschichten (fast) überhaupt nicht vorkommt. Dies deutet darauf hin, dass es in diesen spezifischen Texten entweder thematisch irrelevant ist oder (eventuell) durch Synonyme ersetzt wird.
+
+
+### Zusammenfassend
+
+Die Dispersionswerte zeigen, dass das Wort "Tür" in einigen Geschichten von Borchert eine signifikante Rolle spielt und möglicherweise eine wichtige thematische oder symbolische Bedeutung hat, während seine Abwesenheit in anderen Geschichten darauf hinweisen könnte, dass andere Themen oder Elemente dort vorherrschen.
+
+Diese Analyse der Dispersionswerte kann nützlich sein, um die thematische Konsistenz oder Vielfalt in Borcherts Werk zu untersuchen, sowie um zu verstehen, wie bestimmte Begriffe über ein literarisches Korpus verteilt sind.
+
+
+## File View
+
+Durch Auswahl von Wörtern in den verschiedenen Ergebnistabellen ist es auch möglich, sich diese Textstellen genauer anzusehen. 
+
+
+## Cluster
+
+Cluster sind Häufungen oder Verbindungen von Wörtern. Im Beispiel sind Wörter mit dem Stamm *Tür* zu sehen (Mindestfrequenz: 2). 
+
+```{r}
+coll2_quanteda <- textstat_collocations(corp, size = 2, min_count = 5)
+coll2_quanteda |> DT::datatable()
+```
+
+
+```{r}
+coll2_tidy <- litcorp |> 
+  # Zerlegung in ngrams 
+  unnest_tokens(ngram, text, "ngrams", n=2, drop = FALSE) |>
+  # Gruppenbildung
+  group_by(docvar3) |> 
+  add_count(docvar3, name = "wordsum") |> 
+  group_by(docvar3, wordsum) |> 
+  # Abzählen der ngrams 
+  count(ngram, name = "freq", sort = TRUE) |> 
+  # Normalisierte Frequenz (freq / 1 Million Wörter)
+  mutate(NormFreq = round(freq*10^6/wordsum, 2)) |> 
+  # Neusortierung
+  arrange(docvar3, -freq) |> 
+  # Rangfolge bilden
+  mutate(rank = row_number()) |> 
+  # ngram in wörter zerlegen
+  separate(ngram, into = c("word1", "word2"), sep = " ", remove = FALSE, extra = "merge", fill = "left") |> 
+  rename(word = word1) |> 
+  # Entfernen der Stoppwörter 
+  anti_join(stop_de_tidy, by = "word") |>
+  rename(word1 = word) |> 
+  rename(word = word2) |> 
+  # Entfernen der Stoppwörter 
+  anti_join(stop_de_tidy, by = "word") |>
+  rename(word2 = word) |> 
+  filter(freq > 4)
+
+coll2_tidy |> DT::datatable()
+
+# Prozess
+wortliste_p <- coll2_tidy |> 
+  filter(docvar3=="Prozess")
+# Tom
+wortliste_t <- coll2_tidy |> 
+  filter(docvar3=="Tom")
+
+```
+
+Es gibt mehrere Einstellungsmöglichkeiten, und zwar (außer anderswo erläuterten: Range, Min.Freq, Case, Regex, ...):       
+- die Positionswahl (Partnerwort erscheint vor dem gesuchten Wort (on left), danach (on right) oder kann sowohl links als auch rechts vom gesuchten Wort erscheinen (on left/right);   
+- Cluster Size (wie viele Wörter oder Glieder).   
+
+Im Beispiel suchen wir nach zweigliedrigen, zumindest zweimal im Borchert-Korpus vorkommenden Verbindungen mit Wörtern, die den Stamm *Tür* enthalten und diesem voran- oder nachgestellt sind. Für die Suche verwenden wir im Beispiel einen regulären Ausdruck und schalten die Unterscheidung von Groß und Kleinbuchstaben aus.
+
+```{r}
+cluster <- read.table("data/Antconc/Cluster_results_borchert_prozess.txt", sep = "\t", dec = ".", header = TRUE)
+
+cluster |> DT::datatable()
+```
+
+Die Tabelle enthält Informationen über Wortcluster oder Phrasen, die um das Wort "Tür" in Texten von Borchert gruppiert sind. Jede Zeile in der Tabelle repräsentiert einen spezifischen Cluster, und die angegebenen Metriken helfen dabei, die Verbreitung und Relevanz dieser Cluster im untersuchten Korpus zu verstehen. Hier ist, was die einzelnen Spalten bedeuten:
+
+1. **Cluster**: Die spezifische Phrase oder Wortkombination, die analysiert wird.
+
+2. **Rank**: Die Rangordnung des Clusters basierend auf seiner Häufigkeit oder einem anderen relevanten Maß.
+
+3. **Freq (Frequency)**: Die absolute Häufigkeit, mit der der Cluster im Korpus auftritt. Dies zeigt an, wie oft die Phrase insgesamt gefunden wurde.
+
+4. **Range**: Die Anzahl unterschiedlicher Texte oder Textabschnitte innerhalb des Korpus, in denen der Cluster mindestens einmal vorkommt. Ein Wert von 1 bedeutet, dass der Cluster in einem einzigen Text gefunden wurde.
+
+5. **NormFreq (Normalized Frequency)**: Die Häufigkeit des Clusters pro einer bestimmten Anzahl von Wörtern (z.B. pro 1.000 oder 1.000.000 Wörter) im Korpus, was eine Vergleichbarkeit zwischen Korpora unterschiedlicher Größe ermöglicht.
+
+6. **NormRange (Normalized Range)**: Dies ist ein Maß dafür, wie weit verbreitet der Cluster über verschiedene Teile des Korpus ist, normalisiert möglicherweise an der Anzahl der Texte oder Abschnitte. In Ihrem Fall scheint der Wert konstant zu sein (0.071), was darauf hindeutet, dass jeder Cluster in genau einem Textsegment vorkommt, oder dass es sich um eine standardisierte Skalierung handelt.
+
+
+### Interpretation der Werte
+
+Die vorgestellten Cluster wie „tür kreischt“, „tür schlägt“, und „tür offen“ könnten kontextuelle Verwendungen des Wortes "Tür" in Borcherts Werken reflektieren, die möglicherweise spezifische narrative oder thematische Bedeutungen tragen. Die Frequenzwerte geben an, wie oft solche Kombinationen vorkommen, was auf ihre Bedeutung oder Prominenz im Text hinweisen könnte. Die Tatsache, dass die meisten Cluster nur in einem Textbereich (Range = 1) gefunden werden, könnte darauf hindeuten, dass diese spezifischen Phrasen auf bestimmte Geschichten oder Kontexte beschränkt sind.
+
+Diese Informationen können besonders nützlich sein, um zu verstehen, wie Borchert das Motiv der Tür in verschiedenen Erzählkontexten nutzt, und um Muster in seinem Schreibstil oder thematischen Fokussen zu identifizieren.
+
+
+## Ngram
+
+Eine ähnliche Suchmöglichkeit ist die Ngram-Analyse. Meist werden die Häufigkeit von zwei (oder mehreren) nacheinader auftretenden Wörtern ermittelt. Antconc erlaubt jedoch auch die Ermittlung von nicht-zusammenhängen (diskontinuierlichen) Ngramen (Open-Slot). Im Beispiel suchen wir mit einem regulären Ausdruck zweigliedrige Ngrame, die durch irgend ein Wort unterbrochen werden. 
+
+```{r}
+bild = "data/Antconc/Antconc_ngram.png"
+knitr::include_graphics(bild)
+```
+
+Die Einstellung dafür in unserem Beispiel ist: Ngram size = 3, Open Slot = 1, Mindestfrequenz = 2. 
+
+```{r}
+ngram <- read.table("data/Antconc/N-Gram_results.txt", sep = "\t", dec = ".", header = TRUE)
+
+ngram |> DT::datatable()
+```
+
+In der Ngram-Tabelle beziehen sich die Spalten „S1_TT“ und „S1_Ent“ auf spezifische metrische Werte für die analysierten Ngram-Kombinationen:
+
+1. **S1_TT**: Dies steht für „Test Type Statistic“, was ein statistischer Wert ist, der typischerweise die Signifikanz der Assoziation zwischen den Worten im Ngram ausdrückt. Ein Wert von 1.0 in dieser Spalte könnte darauf hinweisen, dass das Ngram als signifikant relevant betrachtet wird, basierend auf dem verwendeten statistischen Test. Es kann auch bedeuten, dass die Frequenz des Ngrams im untersuchten Korpus genau entspricht, was auf Basis der Einzelwörter erwartet wird.
+
+2. **S1_Ent**: Dies steht für „Entropy“, was ein Maß für die Informationsdichte oder -verteilung in den Daten ist. Entropie in diesem Kontext kann anzeigen, wie vorhersehbar oder gleichmäßig die Verteilung eines Ngrams über das Korpus ist. Ein Wert von 1.0 zeigt eine höhere Gleichmäßigkeit oder Vorhersehbarkeit in der Verteilung an, während ein Wert von 0.0 darauf hindeutet, dass die Verteilung des Ngrams sehr ungleichmäßig oder konzentriert ist (typischerweise auf sehr wenige Vorkommnisse oder Kontexte beschränkt).
+
+Diese Werte helfen dabei, die linguistische Relevanz und die Verteilungscharakteristika der Ngrams im Korpus zu bewerten. In Ihrer Tabelle zeigen die meisten Einträge einen Testtypen-Wert von 1.0, was bedeutet, dass diese Ngrams statistisch signifikante Kombinationen sind, und variierende Entropie-Werte, die die Verteilungsunterschiede dieser Kombinationen im Korpus widerspiegeln.
+
+In der Ngram-Tabelle, die die Spalten „S1_TT“ (Test Type Statistic) und „S1_Ent“ (Entropy) enthält, repräsentieren diese beiden Werte verschiedene statistische Eigenschaften der Ngram-Kombinationen. Hier ist eine detaillierte Erklärung darüber, wie diese Metriken typischerweise berechnet werden könnten, obwohl die genauen Formeln je nach spezifischer Implementierung in AntConc variieren können:
+
+### S1_TT (Test Type Statistic)
+
+Diese Metrik misst typischerweise die statistische Signifikanz der Assoziation zwischen den Komponenten eines Ngrams. Ein häufig verwendetes Maß für diese Statistik ist der **t-Wert**, der in der Korpuslinguistik oft verwendet wird, um die Stärke der Assoziation zwischen Wörtern zu beurteilen. Die allgemeine Formel für den t-Wert ist:
+
+$$
+t = \frac{(O - E)}{\sqrt{V}}
+$$
+
+wo:
+- $O$ die beobachtete Frequenz des Ngrams im Korpus ist.
+- $E$ die erwartete Frequenz des Ngrams ist, berechnet unter der Annahme, dass die Vorkommen der einzelnen Wörter unabhängig voneinander sind.
+- $V$ die Varianz der beobachteten Frequenz ist.
+
+
+### S1_Ent (Entropy)
+
+Entropy (Entropie) misst die Gleichmäßigkeit der Verteilung eines Ngrams über verschiedene Teile des Korpus. Eine hohe Entropie deutet darauf hin, dass das Ngram gleichmäßig über den gesamten Korpus verteilt ist, während eine niedrige Entropie anzeigt, dass das Ngram in bestimmten Teilen des Korpus konzentriert ist. Die Entropie wird typischerweise wie folgt berechnet:
+
+$$
+H = - \sum p(x) \log_2 p(x)
+$$
+
+wo:   
+- $p(x)$ die Wahrscheinlichkeit des Auftretens des Ngrams in einem bestimmten Teil des Korpus ist.   
+- Die Summierung erfolgt über alle Teile des Korpus.
+
+Die Entropie wird oft in Bits gemessen, und die Basis 2 des Logarithmus wird verwendet, um die Berechnung in einer für Informationstheorie typischen Einheit durchzuführen.
+
+Diese beiden Metriken zusammen geben Einblick in die Stärke und die Gleichmäßigkeit der Verteilung der Ngram-Kombinationen innerhalb des Korpus. Während S1_TT auf die Stärke der Assoziation fokussiert, gibt S1_Ent Aufschluss darüber, wie diese Assoziation über das Korpus verteilt ist.
+
+
+## Collocate
+
+Antconc macht auch bestimmte Kollokationsanalysen möglich. 
+
+```{r}
+bild = "data/Antconc/Antconc_Collocate_borschert_prozess.png"
+knitr::include_graphics(bild)
+```
+
+Die Tabelle enthält Daten zu Kollokationen eines bestimmten Wortes ("Tür"). Jede Zeile zeigt eine unterschiedliche Kollokation und verschiedene statistische Maße, die die Beziehung dieser Kollokationen zum Fokuswort in Ihrem Korpus beschreiben. Hier sind die Erklärungen zu den Spalten:
+
+1. **Collocate**: Das Kollokat, also das Wort, das in signifikantem Zusammenhang mit dem Fokuswort (hier vielleicht "Tür") steht.
+
+2. **Rank**: Die Rangposition des Kollokats basierend auf einem der statistischen Maße, wie z.B. Häufigkeit oder Likelihood.
+
+3. **Freq(Scaled)**: Eine skalierte oder normalisierte Häufigkeit des Kollokats, die die tatsächliche Häufigkeit in Relation zur Größe des Korpus oder anderen Faktoren angibt.
+
+4. **FreqLR**: Die Häufigkeit des Kollokats in unmittelbarer Nähe zum Fokuswort (links und rechts).
+
+5. **FreqL**: Die Häufigkeit des Kollokats links vom Fokuswort.
+
+6. **FreqR**: Die Häufigkeit des Kollokats rechts vom Fokuswort.
+
+7. **Range**: Die Anzahl verschiedener Texte oder Segmente des Korpus, in denen das Kollokat in Verbindung mit dem Fokuswort auftritt.
+
+8. **Likelihood**: Ein Wert für die statistische Signifikanz der Kollokation, gemessen durch den Likelihood-Ratio-Test, der aufzeigt, wie wahrscheinlich es ist, dass die beobachtete Kollokation nicht zufällig ist.
+
+9. **Effect**: Die Effektgröße, die angibt, wie stark die Assoziation zwischen dem Fokuswort und dem Kollokat ist, gemessen als logaritmiertes Verhältnis der relativen Häufigkeiten.
+
+
+### Interpretation der Werte
+
+- **Höhere Werte bei "Likelihood" und "Effect"**: Diese zeigen eine stärkere und statistisch signifikantere Assoziation zwischen den Kollokaten und dem Fokuswort. Zum Beispiel hat "kreischt" eine hohe Effektgröße, was darauf hindeutet, dass es stark mit dem Fokuswort assoziiert ist.
+  
+- **"Range"**: Wenn dieser Wert hoch ist, bedeutet es, dass das Kollokat in vielen verschiedenen Kontexten mit dem Fokuswort erscheint, was auf eine breite Anwendung oder Wichtigkeit im Korpus hinweist.
+
+Die Daten in Ihrer Tabelle sind nützlich, um zu verstehen, wie und in welchen Kontexten bestimmte Wörter in Beziehung zueinander stehen, und können Aufschluss darüber geben, welche Themen oder Konzepte in Ihrem Korpus besonders relevant sind.
+
+```{r}
+collocate <- read.table("data/Antconc/Collocate_results.txt", sep = "\t", dec = ".", header = TRUE)
+
+collocate |> DT::datatable()
+```
+
+Die Berechnung von "Likelihood" und "Effect" in Kollokationsanalysen, wie sie in AntConc und anderen korpuslinguistischen Tools verwendet werden, basiert auf bestimmten statistischen Verfahren. Hier sind die allgemeinen Formeln und Erklärungen für diese beiden Maße:
+
+
+### Likelihood (Log-Likelihood)
+
+Die "Likelihood" oder genauer der "Log-Likelihood" misst die Wahrscheinlichkeit, dass die beobachtete Häufigkeit einer Kollokation im Vergleich zur erwarteten Häufigkeit auftritt, wenn keine spezifische Beziehung zwischen den Wörtern bestehen würde. Die Berechnung basiert auf einer Kontingenztabelle, die die Frequenzen des Fokuswortes und des Kollokats sowohl gemeinsam als auch separat darstellt.
+
+Die Formel für den Log-Likelihood-Test lautet:
+$$
+G^2 = 2 \sum_{i=1}^{k} O_i \log \left(\frac{O_i}{E_i}\right)
+$$
+
+wo:   
+- $O_i$ die beobachteten Häufigkeiten der Zellen der Kontingenztabelle sind.   
+- $E_i$ die erwarteten Häufigkeiten sind, basierend auf der Unabhängigkeitsannahme.   
+- $k$ die Anzahl der Zellen in der Kontingenztabelle (typischerweise 4: Fokuswort und Kollokat gemeinsam, jedes einzeln, und keines von beiden).
+
+
+### Effect (Effektgröße)
+
+Die "Effect" Größe (Effektgröße) in Kollokationsanalysen wird oft durch das Maß "Log Ratio" oder das logaritmierte Verhältnis der relativen Häufigkeiten berechnet. Diese Größe gibt an, wie stark die beobachtete Assoziation im Vergleich zur erwarteten ist, wenn die Wörter unabhängig voneinander wären.
+
+Die Formel lautet:
+$$
+\text{Effect Size} = \log_2 \left(\frac{P(w_1 \mid w_2)}{P(w_1)}\right)
+$$
+
+wo:   
+- $P(w_1 \mid w_2)$ die bedingte Wahrscheinlichkeit ist, dass Wort 1 auftritt, gegeben Wort 2 ist auch aufgetreten.   
+- $P(w_1)$ die allgemeine Wahrscheinlichkeit (bzw. die Randhäufigkeit) ist, dass Wort 1 auftritt.   
+- Der Logarithmus zur Basis 2 wird genutzt, damit die Effektgröße in Bit gemessen wird.
+
+Diese Berechnungen helfen, die statistische Signifikanz und die Stärke der Assoziation zwischen zwei Wörtern in einem Korpus zu bestimmen, was für linguistische Studien von großer Bedeutung ist.
+
+
+## Keywords
+
+Lawrence Anthony's `AntConc` ist ein beliebtes Werkzeug für korpuslinguistische Analysen, das verschiedene statistische Methoden zur Untersuchung von Textdaten bietet. In Version 4.2.4 von AntConc werden für die Berechnung von **Schlüsselwörtern** (Keywords) zwei verschiedene Maße verwendet: *Likelihood Ratio* und *Effect Size*.
+
+### Keyness (Likelihood)
+
+**Berechnungsformel:**
+Die Likelihood Ratio, auch als Log-Likelihood bekannt, wird häufig in der Korpuslinguistik verwendet, um zu bestimmen, ob das Vorkommen eines Wortes in einem Korpus im Vergleich zu einem Referenzkorpus signifikant ist. Die Formel ist:
+
+$$
+G^2 = 2 \sum (O \log(\frac{O}{E}))
+$$
+
+wo:   
+- $O$ = Beobachtete Häufigkeit in jedem Feld der Kontingenztabelle (Korpus und Referenzkorpus).   
+- $E$ = Erwartete Häufigkeit, basierend auf der Annahme, dass die Gesamtanzahl der Wörter gleich verteilt ist.
+
+**Interpretation der Werte:**
+- Ein höherer Wert von $G^2$ deutet darauf hin, dass das Wort in einem Korpus im Vergleich zum anderen häufiger oder seltener ist, als es die Zufallsverteilung erwarten ließe. Ein hoher $G^2$-Wert zeigt eine hohe Signifikanz an, dass das Wort in einem der Korpora über- oder unterrepräsentiert ist.
+
+### Keyness (Effect Size)
+
+**Berechnungsformel:**
+Die Effect Size (Effektgröße) in AntConc wird üblicherweise als logarithmiertes Verhältnis der relativen Häufigkeiten in zwei Korpora berechnet:
+
+$$
+\text{Effect Size} = \log_2(\frac{f_1 / N_1}{f_2 / N_2})
+$$
+
+wo:   
+- $f_1$ und $f_2$ = Häufigkeiten des Wortes in den beiden Korpora.   
+- $N_1$ und $N_2$ = Gesamtanzahl der Wörter in den beiden Korpora.   
+
+**Interpretation der Werte:**
+- Ein positiver Wert zeigt an, dass das Wort im ersten Korpus überrepräsentiert ist, während ein negativer Wert darauf hinweist, dass es im Vergleich zum zweiten Korpus unterrepräsentiert ist. Die Größe des Effektgrößenwertes gibt Aufschluss über die Stärke des Unterschieds in der relativen Häufigkeit zwischen den Korpora.
+
+Diese Maße helfen Forschern, signifikante Unterschiede in der Verwendung von Wörtern zwischen verschiedenen Textsammlungen (Korpora) zu identifizieren und zu interpretieren, was für viele linguistische und textanalytische Anwendungen von großem Nutzen sein kann.
+
+
+Beispiel einer Tabelle mit Schlüsselwörtern:   
+- *Zielkorpus* (Target Corpus) sind 14 Kurzgeschichten von *Borchert*.   
+- *Referenzkorpus* (Reference Corpus) ist *Kafka*s Roman *Der Prozess*.   
+
+Die beiden Korpora haben wir zuvor im *Corpus Manager* definiert.
+
+```{r}
+bk_keyness <- read.table("data/Antconc/Keyword_results_borchert_prozess.txt", sep = "\t", dec = ".", header = TRUE)
+
+bk_keyness |> DT::datatable(bk_keyness)
+```
+
+
+Die Spaltennamen in der bereitgestellten AntConc-Exporttabelle beziehen sich auf verschiedene metrische und lexikalische Informationen, die in einer korpuslinguistischen Analyse herangezogen werden können. Hier ist eine Erläuterung der einzelnen Spalten:
+
+1. **Type**: Das Wort oder der Ausdruck, dessen Frequenz und Verteilung analysiert wird.
+
+2. **POS**: Die Part-of-Speech (Wortart) des Typs, wenn diese Information verfügbar oder relevant ist.
+
+3. **Headword**: Das Grundwort oder Lemma, zu dem der Typ gehört, falls die Analyse Lemmatisierung verwendet.
+
+4. **Rank**: Die Rangposition des Wortes basierend auf seiner Frequenz im Zielkorpus.
+
+5. **Freq_Tar (Frequency Target)**: Die absolute Häufigkeit des Wortes im Zielkorpus.
+
+6. **Freq_Ref (Frequency Reference)**: Die absolute Häufigkeit des Wortes im Referenzkorpus.
+
+7. **Range_Tar (Range Target)**: Die Anzahl unterschiedlicher Texte im Zielkorpus, in denen das Wort vorkommt.
+
+8. **Range_Ref (Range Reference)**: Die Anzahl unterschiedlicher Texte im Referenzkorpus, in denen das Wort vorkommt.
+
+9. **NormFreq_Tar (Normalized Frequency Target)**: Die normalisierte Frequenz des Wortes im Zielkorpus, typischerweise pro 1 Million Wörter.
+
+10. **NormFreq_Ref (Normalized Frequency Reference)**: Die normalisierte Frequenz des Wortes im Referenzkorpus, pro 1 Million Wörter.
+
+11. **NormRange_Tar (Normalized Range Target)**: Ein Maß für die Verteilung des Wortes im Zielkorpus, normalisiert eventuell nach der Anzahl der Texte im Korpus.
+
+12. **NormRange_Ref (Normalized Range Reference)**: Ein Maß für die Verteilung des Wortes im Referenzkorpus, ebenfalls eventuell normalisiert.
+
+13. **Keyness (Likelihood)**: Der Wert des Log-Likelihood-Tests, der angibt, wie wahrscheinlich es ist, dass die Unterschiede in der Frequenz des Wortes zwischen den Korpora zufällig sind.
+
+14. **Keyness (Effect)**: Die Effektgröße, die das relative Ausmaß des Unterschieds in der Frequenz des Wortes zwischen den Korpora angibt, gemessen als logarithmiertes Verhältnis der relativen Häufigkeiten.
+
+Diese Spalten bieten umfassende Daten, um Unterschiede in der Verwendung von Wörtern zwischen zwei Korpora (Ziel und Referenz) zu analysieren, was nützlich für linguistische Untersuchungen und die Identifizierung von Schlüsselbegriffen ist.
+
+
+## Wortwolke
+
+Die *Wortwolke* (wordcloud), in Antconc erzeugt, zeigt *Schlüsselwörter* in Borcherts Kurzgeschichten (mit höheren Wahrscheinlichkeitswerten - Likelhood):   
+
+```{r}
+bild = "data/Antconc/Antconc_wordcloud_borchert_prozess_nach_likelihood.png"
+knitr::include_graphics(bild)
+```
+

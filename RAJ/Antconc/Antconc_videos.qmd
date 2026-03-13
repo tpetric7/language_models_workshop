@@ -1,0 +1,209 @@
+---
+title: "Antconc 4.2"
+subtitle: "Text aus den Untertiteln zu den Videos von Anthony Lawrence über Antconc"
+author: "Teodor Petrič"
+date: "2025-06-27 (update: 'r Sys.Date()')"
+execute: 
+  warning: false
+  message: false
+  echo: true
+  error: true
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    # css: [style.css, TMwR.css]
+    # scss: [colors.scss]
+    # scss: [r4ds.scss]
+    # page-layout: full
+    toc: true
+    toc-depth: 5
+    toc-location: right
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    code-copy: hover
+    code-overflow: wrap
+    code-link: false # set to false for plotly
+    number-sections: true
+    number-depth: 5
+    callout-appearance: default
+    callout-icon: true
+    citations-hover: true
+    footnotes-hover: true
+    fig-width: 8
+    fig-height: 6
+    fig-align: left
+    fig-responsive: true
+    fig-cap-location: bottom
+    tbl-cap-location: top
+    lang: en
+    self-contained: true
+    anchor-sections: true
+    smooth-scroll: true
+    hypothesis: true
+  pdf:
+    documentclass: scrreprt # scrbook
+    keep-tex: true
+    include-in-header: 
+      text: |
+        \usepackage{makeidx}
+        \makeindex
+    include-after-body: 
+      text: |
+        \printindex
+  epub:
+    cover-image: "pictures/R_delavnica_naslovna_slika.png"
+  docx:
+    reference-doc: custom-reference.docx
+
+editor: source
+---
+
+
+## Pakete laden
+
+```{r}
+library(readtext)
+library(tidyverse)
+library(tidytext)
+```
+
+
+## Textdateien laden und als Datensatz formatieren
+
+Außerdem: einige Korrekturen
+
+```{r}
+#| eval: false
+
+anttext <- readtext("Antconc_video_texts/*.txt") |> 
+  as_tibble() |> 
+  separate(doc_id, into = c("doc_id", "series"), sep = "_") |> 
+  separate(series, into = c("series", "title"), sep = " - ") |> 
+  mutate(
+    doc_id = str_squish(doc_id),
+    series = str_squish(series),
+    text = str_squish(text),
+    text = str_remove(text, "^foreign\\sTy\\s|^fremd\\s|\\[Musik\\]\\s")
+  )
+anttext
+```
+
+
+## Datensatz speichern
+
+```{r}
+#| eval: false
+
+anttext |> 
+  write_csv("Antconc_video_texts/Antconc_video_texts.csv")
+anttext |> 
+  writexl::write_xlsx("Antconc_video_texts/Antconc_video_texts.xlsx")
+```
+
+
+## Texte als Einzeldateien speichern
+
+```{r}
+#| eval: false
+
+# In der letzten Zeile unten den Weg zur Datei angeben!!!
+# Dann den gesamten Code ausführen.
+
+# Erforderliche Pakete laden
+if (!requireNamespace("readr", quietly = TRUE)) {
+  install.packages("readr")
+}
+if (!requireNamespace("readxl", quietly = TRUE)) {
+  install.packages("readxl")
+}
+
+# Bibliotheken laden
+library(readr)
+library(readxl)
+
+# Funktion, um Datei zu verarbeiten
+export_texts <- function(file_path) {
+  # Dateiendung bestimmen
+  file_extension <- tools::file_ext(file_path)
+  
+  # Datei einlesen basierend auf der Endung
+  if (file_extension %in% c("csv")) {
+    data <- read_csv(file_path)
+  } else if (file_extension %in% c("xlsx", "xls")) {
+    data <- read_excel(file_path)
+  } else {
+    stop("Ungültige Dateiendung. Bitte eine .csv, .xlsx oder .xls Datei angeben.")
+  }
+  
+  # Überprüfen, ob Spalte "text" oder "Text" existiert
+  text_col <- ifelse("text" %in% names(data), "text", 
+                     ifelse("Text" %in% names(data), "Text", NA))
+  if (is.na(text_col)) {
+    stop("Keine 'text' oder 'Text' Spalte in der Datei gefunden.")
+  }
+  
+  # Überprüfen, ob Spalten "title" oder "Titel" existieren
+  title_col <- ifelse("title" %in% names(data), "title", 
+                      ifelse("Titel" %in% names(data), "Titel", NA))
+  
+  # Unterverzeichnis erstellen, falls nicht vorhanden
+  subfolder <- "Texte_"
+  if (!dir.exists(subfolder)) {
+    dir.create(subfolder)
+  }
+  
+  # Texte exportieren
+  for (i in 1:nrow(data)) {
+    text <- data[[text_col]][i]
+    title <- if (!is.na(title_col)) data[[title_col]][i] else ""
+    title <- ifelse(is.na(title), "", title) # NA-Werte durch leere Zeichenfolge ersetzen
+    if (title != "") {
+      content <- paste(title, text, sep = "\n")
+    } else {
+      content <- text
+    }
+    filename <- paste0("Text", i, ".txt")
+    file_path <- file.path(subfolder, filename)
+    writeLines(content, file_path)
+  }
+}
+
+```
+
+
+```{r}
+#| eval: false
+
+# In Windows 11 in File Explorer mit der rechten Maustause wählen:
+# "Kopiraj kot pot", um den Weg zur csv-/xlsx-Datei zu kopieren.
+# Achtung!
+# Backslashes müssen zu Vorwärts-Schrägstrichen verändert werden. 
+
+# Beispielaufruf der Funktion----
+
+# In Klammern den Weg zur Datei einfügen.
+export_texts("c:/Users/teodo/Documents/R/RPDJG/Antconc_video_texts/Antconc_video_texts.csv")
+
+# Das Verzeichnis "Texte" ist im Arbeitsverzeichnis von R.
+# Tippen Sie getwd() ein, falls Sie es nicht kennen.
+
+```
+
+## Alle Texte neu laden und als Text speichern
+
+```{r}
+#| eval: false
+
+anttext_list <- list.files(path = "Antconc_video_texts/Texte/", pattern = ".txt", full.names = TRUE)
+
+# join into one text file and save
+anttext_files <- map(anttext_list, read_lines)
+
+anttext_files |> 
+  unlist() |> 
+  write_lines("Antconc_video_texts/alle.txt")
+```
+
